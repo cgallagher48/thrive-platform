@@ -120,13 +120,18 @@ function useInView(threshold = 0.15) {
 }
 
 // ─── Navbar ────────────────────────────────────────────────────────────────────
+
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 30);
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
   }, []);
+
+  const links = ["The Problem", "How It Works", "Industries", "Pricing"];
 
   return (
     <nav
@@ -138,23 +143,36 @@ function Navbar() {
         zIndex: 100,
         transition: "all 0.4s ease",
         background: scrolled
-          ? "rgba(8, 6, 18, 0.92)"
-          : "transparent",
-        backdropFilter: scrolled ? "blur(20px)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(139,92,246,0.15)" : "none",
-        padding: "0 2rem",
+          ? "rgba(10, 6, 20, 0.95)"
+          : "rgba(10, 6, 20, 0.4)",
+        backdropFilter: "blur(12px)",
+        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "none",
       }}
     >
-      <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
-        <span style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: "1.4rem", color: "#fff", letterSpacing: "-0.02em" }}>
+      {/* Top bar */}
+      <div
+        style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: "0 1.5rem",
+          height: 64,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        {/* Logo */}
+        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: "1.2rem" }}>
           Thrive <span style={{ color: "#a78bfa" }}>.</span>
         </span>
-        <div style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
-          {["The Problem", "How It Works", "Industries", "Pricing"].map((item) => (
+
+        {/* Desktop links */}
+        <div style={{ display: "flex", gap: "2.5rem", alignItems: "center" }} className="thrive-desktop-nav">
+          {links.map((item) => (
             <a
               key={item}
               href={`#${item.toLowerCase().replace(/ /g, "-")}`}
-              style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none", fontSize: "0.85rem", letterSpacing: "0.08em", textTransform: "uppercase", transition: "color 0.2s" }}
+              style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none", fontSize: "0.85rem" }}
               onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#a78bfa")}
               onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "rgba(255,255,255,0.6)")}
             >
@@ -174,16 +192,101 @@ function Navbar() {
               letterSpacing: "0.04em",
               transition: "opacity 0.2s, transform 0.2s",
             }}
-            onMouseEnter={(e) => { (e.target as HTMLElement).style.opacity = "0.85"; (e.target as HTMLElement).style.transform = "translateY(-1px)"; }}
-            onMouseLeave={(e) => { (e.target as HTMLElement).style.opacity = "1"; (e.target as HTMLElement).style.transform = "none"; }}
+            onMouseEnter={(e) => {
+              (e.target as HTMLElement).style.opacity = "0.85";
+              (e.target as HTMLElement).style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLElement).style.opacity = "1";
+              (e.target as HTMLElement).style.transform = "translateY(0)";
+            }}
+          >
+            Book a Call
+          </a>
+        </div>
+
+        {/* Hamburger — mobile only */}
+        <button
+          className="thrive-hamburger"
+          onClick={() => setMenuOpen(!menuOpen)}
+          style={{
+            display: "none",
+            flexDirection: "column",
+            gap: 5,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "0.5rem",
+          }}
+          aria-label="Toggle menu"
+        >
+          <span style={{
+            display: "block", width: 24, height: 2, background: "#fff", borderRadius: 2,
+            transition: "transform 0.2s",
+            transform: menuOpen ? "translateY(7px) rotate(45deg)" : "none",
+          }} />
+          <span style={{
+            display: "block", width: 24, height: 2, background: "#fff", borderRadius: 2,
+            transition: "opacity 0.2s",
+            opacity: menuOpen ? 0 : 1,
+          }} />
+          <span style={{
+            display: "block", width: 24, height: 2, background: "#fff", borderRadius: 2,
+            transition: "transform 0.2s",
+            transform: menuOpen ? "translateY(-7px) rotate(-45deg)" : "none",
+          }} />
+        </button>
+      </div>
+
+      {/* Mobile dropdown */}
+      <div style={{
+        maxHeight: menuOpen ? 400 : 0,
+        overflow: "hidden",
+        transition: "max-height 0.3s ease",
+        background: "rgba(10, 6, 20, 0.97)",
+        borderTop: menuOpen ? "1px solid rgba(255,255,255,0.06)" : "none",
+      }}>
+        <div style={{ display: "flex", flexDirection: "column", padding: "1rem 1.5rem 1.5rem", gap: "1.25rem" }}>
+          {links.map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase().replace(/ /g, "-")}`}
+              onClick={() => setMenuOpen(false)}
+              style={{ color: "rgba(255,255,255,0.7)", textDecoration: "none", fontSize: "1rem", fontWeight: 500 }}
+            >
+              {item}
+            </a>
+          ))}
+          <a
+            href="#pricing"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+              color: "#fff",
+              padding: "0.75rem 1.4rem",
+              borderRadius: 6,
+              textDecoration: "none",
+              fontSize: "0.95rem",
+              fontWeight: 600,
+              textAlign: "center",
+              marginTop: "0.5rem",
+            }}
           >
             Book a Call
           </a>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .thrive-desktop-nav { display: none !important; }
+          .thrive-hamburger { display: flex !important; }
+        }
+      `}</style>
     </nav>
   );
 }
+
 
 // ─── Hero ──────────────────────────────────────────────────────────────────────
 function Hero() {
