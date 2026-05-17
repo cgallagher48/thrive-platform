@@ -528,7 +528,7 @@ function DashboardMockup() {
     <section ref={ref} style={{ padding: "5rem 2rem 7rem", overflow: "hidden" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-          <p style={{ color: "#a78bfa", fontSize: "0.78rem", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "1rem" }}>Your Command Center</p>
+          <p style={{ color: "#a78bfa", fontSize: "0.78rem", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "1rem" }}>Your Command Center</p>
           <h2 style={{
             fontFamily: "'DM Serif Display', Georgia, serif",
             fontSize: "clamp(2rem, 4vw, 3rem)",
@@ -539,105 +539,86 @@ function DashboardMockup() {
         </div>
 
         {/* Dashboard Card */}
-        <div
-          style={{
-            background: "linear-gradient(145deg, rgba(20,12,48,0.95), rgba(12,6,28,0.98))",
-            border: "1px solid rgba(139,92,246,0.25)",
-            borderRadius: 16,
-            padding: "1.5rem",
-            boxShadow: "0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.1), inset 0 1px 0 rgba(255,255,255,0.04)",
-            opacity: inView ? 1 : 0,
-            transform: inView ? "perspective(1200px) rotateX(0deg)" : "perspective(1200px) rotateX(6deg)",
-            transition: "all 0.9s cubic-bezier(0.22, 1, 0.36, 1)",
-          }}
-        >
+        <div style={{
+          background: "linear-gradient(145deg, rgba(20,12,48,0.95), rgba(12,8,32,0.98))",
+          border: "1px solid rgba(139,92,246,0.25)",
+          borderRadius: 16,
+          padding: "1.5rem",
+          boxShadow: "0 40px 100px rgba(0,0,0,0.6), 0 0 1px rgba(139,92,246,0.24)",
+          opacity: inView ? 1 : 0,
+          transform: inView ? "perspective(1200px) rotateX(0deg)" : "perspective(1200px) rotateX(8deg)",
+          transition: "all 0.9s cubic-bezier(0.22, 1, 0.36, 1)",
+        }}>
           {/* Window chrome */}
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginBottom: "1.5rem" }}>
-            {["#ef4444","#f59e0b","#22c55e"].map((c) => (
+          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginBottom: "1.25rem" }}>
+            {["#ef4444", "#f59e0b", "#22c55e"].map((c) => (
               <div key={c} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />
             ))}
-            <div style={{ flex: 1, background: "rgba(255,255,255,0.05)", borderRadius: 4, height: 22, marginLeft: "0.5rem", display: "flex", alignItems: "center", paddingLeft: "0.75rem" }}>
+            <div style={{ flex: 1, background: "rgba(255,255,255,0.05)", borderRadius: 4, padding: "0.2rem 0.75rem", marginLeft: "0.5rem" }}>
               <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.7rem" }}>app.Thrive.ai/dashboard</span>
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: "1.25rem", minHeight: 380 }}>
+          {/* Responsive grid — stacks on mobile */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "min(180px, 35%) 1fr",
+            gap: "1rem",
+          }}>
             {/* Sidebar */}
-            <div style={{ background: "rgba(139,92,246,0.05)", borderRadius: 10, padding: "1.25rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-              <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Navigation</div>
-              {[["⬛", "Overview", true], ["◈", "Workflows", false], ["◎", "Integrations", false], ["⬡", "Analytics", false], ["◇", "Reports", false]].map(([ic, label, active]) => (
+            <div style={{ background: "rgba(139,92,246,0.05)", borderRadius: 10, padding: "1rem 0.75rem" }}>
+              <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.6rem", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Navigation</div>
+              {[["▪", "Overview", true], ["◈", "Workflows", false], ["◎", "Integrations", false], ["⬡", "Analytics", false], ["◇", "Reports", false]].map(([icon, label, active]) => (
                 <div key={String(label)} style={{
-                  display: "flex", alignItems: "center", gap: "0.6rem",
-                  padding: "0.55rem 0.75rem", borderRadius: 7,
+                  display: "flex", alignItems: "center", gap: "0.5rem",
+                  padding: "0.45rem 0.6rem", borderRadius: 7,
                   background: active ? "rgba(139,92,246,0.2)" : "transparent",
                   border: active ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
-                  cursor: "pointer",
+                  marginBottom: "0.3rem",
                 }}>
-                  <span style={{ color: active ? "#a78bfa" : "rgba(255,255,255,0.25)", fontSize: "0.7rem" }}>{String(ic)}</span>
-                  <span style={{ color: active ? "#e2d9f3" : "rgba(255,255,255,0.35)", fontSize: "0.8rem", fontWeight: active ? 600 : 400 }}>{String(label)}</span>
+                  <span style={{ fontSize: "0.7rem", color: active ? "#a78bfa" : "rgba(255,255,255,0.3)" }}>{String(icon)}</span>
+                  <span style={{ fontSize: "0.72rem", color: active ? "#fff" : "rgba(255,255,255,0.4)", fontWeight: active ? 600 : 400 }}>{String(label)}</span>
                 </div>
               ))}
-              <div style={{ flex: 1 }} />
-              <div style={{ background: "rgba(139,92,246,0.15)", borderRadius: 8, padding: "0.75rem", border: "1px solid rgba(139,92,246,0.25)" }}>
-                <div style={{ color: "#a78bfa", fontSize: "0.65rem", fontWeight: 700, marginBottom: 4 }}>LIVE STATUS</div>
+              <div style={{ marginTop: "1rem", padding: "0.6rem", background: "rgba(139,92,246,0.08)", borderRadius: 7, border: "1px solid rgba(139,92,246,0.15)" }}>
+                <div style={{ fontSize: "0.6rem", color: "#a78bfa", fontWeight: 700, letterSpacing: "0.05em", marginBottom: "0.35rem" }}>LIVE STATUS</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 6px #22c55e" }} />
-                  <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.72rem" }}>14 workflows running</span>
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e" }} />
+                  <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.6)" }}>14 workflows running</span>
                 </div>
               </div>
             </div>
 
             {/* Main content */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {/* KPI cards */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem" }}>
-                {[
-                  { label: "Hours Saved", color: "#22c55e" },
-                  { label: "Tasks Automated", color: "#a78bfa" },
-                  { label: "Cost Reduction", color: "#e879f9" },
-                ].map(({ label, color }) => (
-                  <div key={label} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: "1rem", border: "1px solid rgba(255,255,255,0.07)" }}>
-                    <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.68rem", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.4rem" }}>{label}</div>
-                    <div style={{ width: 60, height: 4, borderRadius: 2, background: `${color}33`, marginBottom: "0.6rem" }} />
-                    <div style={{ color, fontSize: "0.7rem", fontWeight: 700 }}>Your data here</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              {/* Stat cards */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.6rem" }}>
+                {[["Hours Saved", "247h", "#22c55e"], ["Tasks Automated", "1,840", "#a78bfa"], ["Cost Reduction", "68%", "#f59e0b"], ["Active Workflows", "14", "#38bdf8"]].map(([label, val, color]) => (
+                  <div key={String(label)} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "0.65rem 0.75rem", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ fontSize: "0.58rem", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.3rem" }}>{String(label)}</div>
+                    <div style={{ fontSize: "clamp(0.9rem, 2vw, 1.1rem)", fontWeight: 700, color: String(color) }}>{String(val)}</div>
                   </div>
                 ))}
               </div>
 
               {/* Chart */}
-              <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: "1.25rem", border: "1px solid rgba(255,255,255,0.07)", flex: 1 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                  <span style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.78rem", fontWeight: 600 }}>Automation Volume</span>
-                  <div style={{ display: "flex", gap: "0.4rem" }}>
-                    {["7D", "30D", "90D"].map((t, i) => (
-                      <span key={t} style={{
-                        padding: "0.2rem 0.5rem", borderRadius: 4, fontSize: "0.65rem",
-                        background: i === 1 ? "rgba(139,92,246,0.25)" : "transparent",
-                        color: i === 1 ? "#a78bfa" : "rgba(255,255,255,0.3)",
-                        border: i === 1 ? "1px solid rgba(139,92,246,0.4)" : "1px solid transparent",
-                        cursor: "pointer",
-                      }}>{t}</span>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "flex-end", gap: "4px", height: 120 }}>
+              <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "0.75rem", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.5)", marginBottom: "0.5rem", fontWeight: 600 }}>Automation Volume</div>
+                <div style={{ display: "flex", alignItems: "flex-end", gap: "3px", height: 60 }}>
                   {bars.map((h, i) => (
-                    <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", height: "100%" }}>
+                    <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
                       <div style={{
-                        width: "100%",
-                        height: `${h}%`,
-                        background: i === bars.length - 1
-                          ? "linear-gradient(180deg, #a855f7, #7c3aed)"
-                          : "rgba(139,92,246,0.3)",
+                        width: "100%", height: `${h}%`,
+                        background: i === bars.length - 1 ? "linear-gradient(180deg, #a855f7, #7c3aed)" : "rgba(139,92,246,0.3)",
                         borderRadius: "3px 3px 0 0",
                         transition: "height 1s ease",
                       }} />
                     </div>
                   ))}
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem" }}>
-                  {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].map((m) => (
-                    <span key={m} style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.55rem" }}>{m}</span>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.35rem" }}>
+                  {["J","F","M","A","M","J","J","A","S","O","N","D"].map((m) => (
+                    <span key={m} style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.5rem" }}>{m}</span>
                   ))}
                 </div>
               </div>
@@ -648,7 +629,6 @@ function DashboardMockup() {
     </section>
   );
 }
-
 // ─── Features ──────────────────────────────────────────────────────────────────
 function Features() {
   const { ref, inView } = useInView();
