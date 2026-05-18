@@ -227,7 +227,7 @@ export default function Dashboard() {
   <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
     <div style={{
       width: "100%",
-      height: `${h}%`,
+      height: `${h * 1.6}px`,
       background: i === BARS.length - 1
         ? "linear-gradient(180deg, #a855f7, #7c3aed)"
         : "rgba(139,92,246,0.3)",
