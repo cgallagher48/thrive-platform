@@ -45,68 +45,43 @@ export default function Dashboard() {
       display: "flex",
     }}>
 
-      {/* Mobile overlay */}
       {sidebarOpen && (
-        <div
-          onClick={() => setSidebarOpen(false)}
-          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 40 }}
-        />
+        <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 40 }} />
       )}
 
-      {/* Sidebar */}
       <div style={{
-        position: "fixed",
-        top: 0, left: 0, bottom: 0,
-        width: 240,
+        position: "fixed", top: 0, left: 0, bottom: 0, width: 240,
         background: "rgba(10,6,24,0.98)",
         borderRight: "1px solid rgba(139,92,246,0.12)",
-        display: "flex",
-        flexDirection: "column",
-        zIndex: 50,
+        display: "flex", flexDirection: "column", zIndex: 50,
         transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
         transition: "transform 0.3s ease",
-      }}
-      className="sidebar">
-        {/* Logo */}
+      }} className="sidebar">
         <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <div style={{ fontWeight: 700, fontSize: "1.2rem" }}>
-            Thrive <span style={{ color: "#a78bfa" }}>.</span>
-          </div>
+          <div style={{ fontWeight: 700, fontSize: "1.2rem" }}>Thrive <span style={{ color: "#a78bfa" }}>.</span></div>
           <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.3)", marginTop: "0.2rem" }}>Client Portal</div>
         </div>
-
-        {/* Client info */}
         <div style={{ padding: "1rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>Account</div>
           <div style={{ fontSize: "0.9rem", fontWeight: 600 }}>Apex Roofing Co.</div>
           <div style={{ fontSize: "0.72rem", color: "#a78bfa", marginTop: "0.2rem" }}>Growth Plan</div>
         </div>
-
-        {/* Nav links */}
         <nav style={{ padding: "1rem 0.75rem", flex: 1 }}>
           {SIDEBAR_LINKS.map(({ icon, label }) => (
-            <button
-              key={label}
-              onClick={() => { setActive(label); setSidebarOpen(false); }}
-              style={{
-                display: "flex", alignItems: "center", gap: "0.75rem",
-                width: "100%", padding: "0.65rem 0.75rem",
-                borderRadius: 8, border: "none", cursor: "pointer",
-                marginBottom: "0.25rem",
-                background: active === label ? "rgba(139,92,246,0.18)" : "transparent",
-                color: active === label ? "#fff" : "rgba(255,255,255,0.45)",
-                fontSize: "0.875rem", fontWeight: active === label ? 600 : 400,
-                textAlign: "left",
-                transition: "all 0.15s ease",
-              }}
-            >
+            <button key={label} onClick={() => { setActive(label); setSidebarOpen(false); }} style={{
+              display: "flex", alignItems: "center", gap: "0.75rem",
+              width: "100%", padding: "0.65rem 0.75rem", borderRadius: 8,
+              border: "none", cursor: "pointer", marginBottom: "0.25rem",
+              background: active === label ? "rgba(139,92,246,0.18)" : "transparent",
+              color: active === label ? "#fff" : "rgba(255,255,255,0.45)",
+              fontSize: "0.875rem", fontWeight: active === label ? 600 : 400,
+              textAlign: "left", transition: "all 0.15s ease",
+            }}>
               <span style={{ fontSize: "0.8rem", color: active === label ? "#a78bfa" : "rgba(255,255,255,0.25)" }}>{icon}</span>
               {label}
             </button>
           ))}
         </nav>
-
-        {/* Live status */}
         <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "0.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
@@ -118,24 +93,18 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Main content */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }} className="main-content">
-
-        {/* Top bar */}
         <div style={{
           height: 60, display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "0 1.5rem",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(8,5,24,0.8)",
-          backdropFilter: "blur(12px)",
+          padding: "0 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.06)",
+          background: "rgba(8,5,24,0.8)", backdropFilter: "blur(12px)",
           position: "sticky", top: 0, zIndex: 30,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <button
-              className="hamburger-dash"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              style={{ background: "none", border: "none", cursor: "pointer", padding: "0.25rem", display: "none", flexDirection: "column", gap: 4 }}
-            >
+            <button className="hamburger-dash" onClick={() => setSidebarOpen(!sidebarOpen)} style={{
+              background: "none", border: "none", cursor: "pointer", padding: "0.25rem",
+              display: "none", flexDirection: "column", gap: 4,
+            }}>
               <span style={{ display: "block", width: 20, height: 2, background: "#fff", borderRadius: 2 }} />
               <span style={{ display: "block", width: 20, height: 2, background: "#fff", borderRadius: 2 }} />
               <span style={{ display: "block", width: 20, height: 2, background: "#fff", borderRadius: 2 }} />
@@ -148,18 +117,14 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Page content */}
         <div style={{ padding: "2rem 1.5rem", flex: 1 }}>
 
-          {/* OVERVIEW */}
           {active === "Overview" && (
             <div>
               <div style={{ marginBottom: "2rem" }}>
-                <h1 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "0.25rem" }}>Good evening, Apex Roofing 👋</h1>
-                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Here's your automation performance this month.</p>
+                <h1 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "0.25rem" }}>Good morning, Apex Roofing 👋</h1>
+                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Here is your automation performance this month.</p>
               </div>
-
-              {/* Stat cards */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
                 {[
                   { label: "Hours Saved", value: "247h", change: "+12h this week", color: "#22c55e" },
@@ -167,19 +132,13 @@ export default function Dashboard() {
                   { label: "Cost Reduction", value: "68%", change: "vs. manual ops", color: "#f59e0b" },
                   { label: "Est. Revenue Recovered", value: "$34,200", change: "from missed calls", color: "#38bdf8" },
                 ].map(({ label, value, change, color }) => (
-                  <div key={label} style={{
-                    background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.07)",
-                    borderRadius: 12, padding: "1.25rem",
-                  }}>
+                  <div key={label} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "1.25rem" }}>
                     <div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.5rem" }}>{label}</div>
                     <div style={{ fontSize: "1.75rem", fontWeight: 700, color, marginBottom: "0.25rem" }}>{value}</div>
                     <div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.3)" }}>{change}</div>
                   </div>
                 ))}
               </div>
-
-              {/* Recent activity */}
               <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.25rem" }}>
                 <div style={{ fontSize: "0.85rem", fontWeight: 600, marginBottom: "1rem" }}>Recent Activity</div>
                 {[
@@ -201,7 +160,6 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* WORKFLOWS */}
           {active === "Workflows" && (
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
@@ -209,19 +167,11 @@ export default function Dashboard() {
                   <h1 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "0.25rem" }}>Workflows</h1>
                   <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>6 active · 2 paused</p>
                 </div>
-                <div style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7)", padding: "0.55rem 1.25rem", borderRadius: 8, fontSize: "0.82rem", fontWeight: 600, cursor: "pointer" }}>
-                  + Request Workflow
-                </div>
+                <div style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7)", padding: "0.55rem 1.25rem", borderRadius: 8, fontSize: "0.82rem", fontWeight: 600, cursor: "pointer" }}>+ Request Workflow</div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 {WORKFLOWS.map((w) => (
-                  <div key={w.name} style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    borderRadius: 12, padding: "1rem 1.25rem",
-                    display: "flex", alignItems: "center", justifyContent: "space-between",
-                    flexWrap: "wrap", gap: "0.75rem",
-                  }}>
+                  <div key={w.name} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1rem 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                       <div style={{ width: 8, height: 8, borderRadius: "50%", background: w.status === "running" ? "#22c55e" : "rgba(255,255,255,0.2)", boxShadow: w.status === "running" ? "0 0 6px #22c55e" : "none", flexShrink: 0 }} />
                       <div>
@@ -231,12 +181,7 @@ export default function Dashboard() {
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                       <div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.3)" }}>Next: {w.nextRun}</div>
-                      <div style={{
-                        fontSize: "0.68rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: 20,
-                        background: w.status === "running" ? "rgba(34,197,94,0.12)" : "rgba(255,255,255,0.06)",
-                        color: w.status === "running" ? "#22c55e" : "rgba(255,255,255,0.35)",
-                        border: `1px solid ${w.status === "running" ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.08)"}`,
-                      }}>
+                      <div style={{ fontSize: "0.68rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: 20, background: w.status === "running" ? "rgba(34,197,94,0.12)" : "rgba(255,255,255,0.06)", color: w.status === "running" ? "#22c55e" : "rgba(255,255,255,0.35)", border: `1px solid ${w.status === "running" ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.08)"}` }}>
                         {w.status === "running" ? "● Running" : "⏸ Paused"}
                       </div>
                     </div>
@@ -246,7 +191,6 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* INTEGRATIONS */}
           {active === "Integrations" && (
             <div>
               <div style={{ marginBottom: "1.5rem" }}>
@@ -255,19 +199,10 @@ export default function Dashboard() {
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>
                 {INTEGRATIONS.map((int) => (
-                  <div key={int.name} style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: `1px solid ${int.status === "connected" ? "rgba(139,92,246,0.2)" : "rgba(255,255,255,0.06)"}`,
-                    borderRadius: 12, padding: "1.25rem",
-                  }}>
+                  <div key={int.name} style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${int.status === "connected" ? "rgba(139,92,246,0.2)" : "rgba(255,255,255,0.06)"}`, borderRadius: 12, padding: "1.25rem" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
                       <span style={{ fontSize: "1.5rem" }}>{int.icon}</span>
-                      <div style={{
-                        fontSize: "0.68rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: 20,
-                        background: int.status === "connected" ? "rgba(34,197,94,0.12)" : "rgba(255,255,255,0.06)",
-                        color: int.status === "connected" ? "#22c55e" : "rgba(255,255,255,0.35)",
-                        border: `1px solid ${int.status === "connected" ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.08)"}`,
-                      }}>
+                      <div style={{ fontSize: "0.68rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: 20, background: int.status === "connected" ? "rgba(34,197,94,0.12)" : "rgba(255,255,255,0.06)", color: int.status === "connected" ? "#22c55e" : "rgba(255,255,255,0.35)", border: `1px solid ${int.status === "connected" ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.08)"}` }}>
                         {int.status === "connected" ? "Connected" : "Available"}
                       </div>
                     </div>
@@ -279,7 +214,6 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* ANALYTICS */}
           {active === "Analytics" && (
             <div>
               <div style={{ marginBottom: "1.5rem" }}>
@@ -291,11 +225,7 @@ export default function Dashboard() {
                 <div style={{ display: "flex", alignItems: "flex-end", gap: "6px", height: 160 }}>
                   {BARS.map((h, i) => (
                     <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-                      <div style={{
-                        width: "100%", height: `${h}%`,
-                        background: i === BARS.length - 1 ? "linear-gradient(180deg, #a855f7, #7c3aed)" : "rgba(139,92,246,0.3)",
-                        borderRadius: "4px 4px 0 0",
-                      }} />
+                      <div style={{ width: "100%", height: `${h}%`, background: i === BARS.length - 1 ? "linear-gradient(180deg, #a855f7, #7c3aed)" : "rgba(139,92,246,0.3)", borderRadius: "4px 4px 0 0" }} />
                     </div>
                   ))}
                 </div>
@@ -322,7 +252,6 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* REPORTS */}
           {active === "Reports" && (
             <div>
               <div style={{ marginBottom: "1.5rem" }}>
@@ -338,11 +267,7 @@ export default function Dashboard() {
                   { title: "Weekly Performance Report", date: "Apr 21, 2026", size: "255 KB" },
                   { title: "Monthly Summary — March 2026", date: "Apr 1, 2026", size: "1.1 MB" },
                 ].map((r, i) => (
-                  <div key={i} style={{
-                    background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
-                    borderRadius: 12, padding: "1rem 1.25rem",
-                    display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem",
-                  }}>
+                  <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1rem 1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
                     <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
                       <span style={{ fontSize: "1.2rem" }}>📄</span>
                       <div>
