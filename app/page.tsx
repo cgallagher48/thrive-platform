@@ -212,8 +212,8 @@ function Navbar() {
     fontSize: "0.85rem",
     padding: "0.55rem 1rem",
     borderRadius: 6,
-    background: "rgba(99,102,241,0.8)",
-    border: "1px solid rgba(99,102,241,0.5)",
+    background: "rgba(139,92,246,0.9)",
+    border: "1px solid rgba(139,92,246,0.6)",
     textAlign: "center",
   }}
 >
