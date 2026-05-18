@@ -202,7 +202,23 @@ function Navbar() {
             }}
           >
             Book a Call
-          </a>
+          </a> 
+          <a
+  href="/login"
+  onClick={() => setMenuOpen(false)}
+  style={{
+    color: "#fff",
+    textDecoration: "none",
+    fontSize: "0.85rem",
+    padding: "0.55rem 1rem",
+    borderRadius: 6,
+    background: "rgba(99,102,241,0.8)",
+    border: "1px solid rgba(99,102,241,0.5)",
+    textAlign: "center",
+  }}
+>
+  Client Login
+</a>
         </div>
 
         {/* Hamburger — mobile only */}
@@ -274,6 +290,19 @@ function Navbar() {
           >
             Book a Call
           </a>
+          <a
+  href="/login"
+  style={{
+    color: "rgba(255,255,255,0.6)",
+    textDecoration: "none",
+    fontSize: "0.85rem",
+    padding: "0.55rem 1rem",
+    borderRadius: 6,
+    border: "1px solid rgba(255,255,255,0.15)",
+  }}
+>
+  Client Login
+</a>
         </div>
       </div>
 
