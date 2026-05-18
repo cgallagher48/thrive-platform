@@ -162,9 +162,16 @@ function Navbar() {
         }}
       >
         {/* Logo */}
-        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: "1.2rem" }}>
-          Thrive <span style={{ color: "#a78bfa" }}>.</span>
-        </span>
+       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+  <img
+    src="/logo.png"
+    alt="Thrive"
+    style={{ height: "32px", width: "auto" }}
+  />
+  <span style={{ color: "#fff", fontWeight: 700, fontSize: "1.1rem" }}>
+    Thrive
+  </span>
+</div>
 
         {/* Desktop links */}
         <div style={{ display: "flex", gap: "2.5rem", alignItems: "center" }} className="thrive-desktop-nav">
