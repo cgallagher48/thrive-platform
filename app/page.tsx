@@ -292,13 +292,20 @@ function Navbar() {
           </a>
           <a
   href="/login"
+  onClick={() => setMenuOpen(false)}
   style={{
-    color: "rgba(255,255,255,0.6)",
+    display: "block",
+    color: "#ffffff",
     textDecoration: "none",
     fontSize: "0.85rem",
-    padding: "0.55rem 1rem",
-    borderRadius: 6,
-    border: "1px solid rgba(255,255,255,0.15)",
+    fontWeight: 600,
+    padding: "0.75rem 1rem",
+    borderRadius: 8,
+    background: "#7c3aed",
+    border: "none",
+    textAlign: "center",
+    width: "100%",
+    boxSizing: "border-box",
   }}
 >
   Client Login
