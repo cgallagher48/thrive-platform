@@ -617,8 +617,8 @@ function DashboardMockup() {
                   ))}
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.35rem" }}>
-                  {["J","F","M","A","M","J","J","A","S","O","N","D"].map((m) => (
-                    <span key={m} style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.5rem" }}>{m}</span>
+                  {["J","F","M","A","M","J","J","A","S","O","N","D"].map((m, i) => (
+                    <span key={i} style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.5rem" }}>{m}</span>
                   ))}
                 </div>
               </div>
