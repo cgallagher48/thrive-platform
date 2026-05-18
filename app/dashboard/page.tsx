@@ -223,11 +223,19 @@ export default function Dashboard() {
               <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.5rem", marginBottom: "1rem" }}>
                 <div style={{ fontWeight: 600, marginBottom: "1.5rem" }}>Automation Volume</div>
                 <div style={{ display: "flex", alignItems: "flex-end", gap: "6px", height: 160 }}>
-                  {BARS.map((h, i) => (
-                    <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-                      <div style={{ width: "100%", height: `${h}%`, background: i === BARS.length - 1 ? "linear-gradient(180deg, #a855f7, #7c3aed)" : "rgba(139,92,246,0.3)", borderRadius: "4px 4px 0 0" }} />
-                    </div>
-                  ))}
+                {BARS.map((h, i) => (
+  <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+    <div style={{
+      width: "100%",
+      height: `${h}%`,
+      background: i === BARS.length - 1
+        ? "linear-gradient(180deg, #a855f7, #7c3aed)"
+        : "rgba(139,92,246,0.3)",
+      borderRadius: "4px 4px 0 0",
+      minHeight: "4px",
+    }} />
+  </div>
+))}
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem" }}>
                   {MONTHS.map((m, i) => (
