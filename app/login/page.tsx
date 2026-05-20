@@ -23,11 +23,12 @@ export default function Login() {
   };
 
   return (
+ <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');`}</style>  
     <div style={{
       minHeight: "100vh",
       background: "linear-gradient(135deg, #080518 0%, #0d0920 50%, #080518 100%)",
       display: "flex", alignItems: "center", justifyContent: "center",
-      fontFamily: "'Inter', sans-serif", padding: "1.5rem",
+      fontFamily: "'DM Sans', sans-serif",
     }}>
       <div style={{ width: "100%", maxWidth: 420 }}>
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
