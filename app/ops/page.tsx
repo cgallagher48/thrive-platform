@@ -42,6 +42,8 @@ function scoreColor(s: number) {
 }
 
 export default function CommandCenter() {
+    const [unlocked, setUnlocked] = useState(false);
+const [pin, setPin] = useState("");
   const [tab, setTab] = useState("atlas");
   const [leads, setLeads] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
@@ -89,7 +91,22 @@ export default function CommandCenter() {
     setNotes(n);
     generateBriefing(la, ca2, fa);
   }
-
+if (!unlocked) return (
+  <div style={{ minHeight: "100vh", background: "#060612", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "sans-serif" }}>
+    <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 16, padding: "2.5rem", width: 340, textAlign: "center" }}>
+      <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>⚡</div>
+      <h2 style={{ color: "#fff", marginBottom: "1.5rem", fontSize: "1.1rem" }}>Thrive Command Center</h2>
+      <input type="password" value={pin} onChange={e => setPin(e.target.value)}
+        onKeyDown={e => e.key === "Enter" && pin === "thrive2026casey" && setUnlocked(true)}
+        placeholder="Enter access code"
+        style={{ width: "100%", padding: "0.75rem", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#fff", fontSize: "0.9rem", outline: "none", marginBottom: "1rem", boxSizing: "border-box" as const, textAlign: "center" }} />
+      <button onClick={() => pin === "thrive2026casey" && setUnlocked(true)}
+        style={{ width: "100%", padding: "0.75rem", background: "linear-gradient(135deg, #7c3aed, #a855f7)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, cursor: "pointer" }}>
+        Access
+      </button>
+    </div>
+  </div>
+);
   async function generateBriefing(l: any[], cl: any[], fi: any[]) {
     setBriefingLoading(true);
     const revenue = fi.filter(f => f.type === "revenue").reduce((a: number, f: any) => a + parseFloat(f.amount || 0), 0);

@@ -187,7 +187,7 @@ function Navbar() {
             </a>
           ))}
           <a
-            href="#pricing"
+            href="/get-started"
             style={{
               background: "linear-gradient(135deg, #7c3aed, #a855f7)",
               color: "#fff",
@@ -210,6 +210,7 @@ function Navbar() {
           >
             Book a Call
           </a> 
+         <a href="/ai" style={{ color: "#fff", background: "linear-gradient(135deg, #7c3aed, #a855f7)", padding: "0.55rem 1.4rem", borderRadius: 6, textDecoration: "none", fontSize: "0.85rem", fontWeight: 600 }}>Custom AI</a>
           <a
   href="/login"
   onClick={() => setMenuOpen(false)}
@@ -281,7 +282,7 @@ function Navbar() {
             </a>
           ))}
           <a
-            href="#pricing"
+            href="/get-started"
             onClick={() => setMenuOpen(false)}
             style={{
               background: "linear-gradient(135deg, #7c3aed, #a855f7)",
@@ -407,7 +408,7 @@ function Hero() {
 
         <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
           <a
-            href="#pricing"
+            href="/get-started"
             style={{
               background: "linear-gradient(135deg, #7c3aed, #a855f7)",
               color: "#fff",
@@ -1020,7 +1021,7 @@ function Pricing() {
               </div>
 
               <a
-                href="#cta"
+                href="/get-started"
                 style={{
                   display: "block", textAlign: "center",
                   padding: "0.9rem",
@@ -1093,7 +1094,7 @@ function CTA() {
               Book a free 45-minute strategy call. We'll map your highest-impact automation opportunities — no obligation, no sales pressure.
             </p>
             <a
-              href="mailto:hello@Thriveautomation.ai"
+              href="/get-started"
               style={{
                 display: "inline-block",
                 background: "linear-gradient(135deg, #7c3aed, #a855f7)",
@@ -1185,3 +1186,5 @@ export default function ThriveAgencyPage() {
     </>
   );
 }
+
+
