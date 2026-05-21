@@ -310,7 +310,7 @@ function Navbar() {
               textAlign: "center",
             }}
           >
-            ✦ Custom AI
+            Custom AI
           </a>
             Book a Call
           </a>
