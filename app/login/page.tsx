@@ -23,14 +23,13 @@ export default function Login() {
   };
 
   return (
- <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');`}</style>  
     <div style={{
       minHeight: "100vh",
       background: "linear-gradient(135deg, #080518 0%, #0d0920 50%, #080518 100%)",
       display: "flex", alignItems: "center", justifyContent: "center",
       fontFamily: "'DM Sans', sans-serif",
     }}>
-      <div style={{ width: "100%", maxWidth: 420 }}>
+      <div style={{ width: "100%", maxWidth: 420, padding: "0 1rem" }}>
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>
             Thrive <span style={{ color: "#a78bfa" }}>.</span>
@@ -77,7 +76,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Secret ops access — only Casey knows */}
       <a href="/ops" style={{ position: "fixed", bottom: 16, right: 16, fontSize: "0.7rem", color: "rgba(255,255,255,0.08)", textDecoration: "none", userSelect: "none" }}>⚡</a>
     </div>
   );
