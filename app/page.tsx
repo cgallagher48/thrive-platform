@@ -296,6 +296,22 @@ function Navbar() {
               marginTop: "0.5rem",
             }}
           >
+           href="/ai"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              display: "block",
+              background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+              color: "#fff",
+              padding: "0.75rem 1.4rem",
+              borderRadius: 6,
+              textDecoration: "none",
+              fontSize: "0.95rem",
+              fontWeight: 600,
+              textAlign: "center",
+            }}
+          >
+            ✦ Custom AI
+          </a>
             Book a Call
           </a>
           <a
