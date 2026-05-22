@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     url: 'https://www.thriveautomation.agency',
     siteName: 'Thrive Automation Agency',
     type: 'website',
+    images: [{ url: '/logo.png' }],
   },
   twitter: {
     card: 'summary_large_image',
