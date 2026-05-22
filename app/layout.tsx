@@ -13,15 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Thrive Automation Agency',
+  title: 'Thrive Automation Agency | AI Systems for Modern Business',
   description: 'AI-powered automation systems for modern businesses. We build custom AI workflows that save time, generate leads, and scale your operations.',
   openGraph: {
-    title: 'Thrive Automation Agency',
-    description: 'AI-powered automation for modern businesses.',
+    title: 'Thrive Automation Agency', | AI Systems for Modern Business',
+    description: 'We build custom AI automation systems that recover missed leads, streamline operations, and scale revenue. Serving Chicago and beyond.',
     url: 'https://www.thriveautomation.agency',
     siteName: 'Thrive Automation Agency',
     type: 'website',
-    images: [{ url: '/logo.png' }],
+    images: [{ url: '/logo.png' , width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
