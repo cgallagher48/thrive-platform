@@ -1,4 +1,6 @@
-'use client'
+﻿const fs = require('fs')
+
+const universe = `'use client'
 import { useRef, useState, useEffect, Suspense } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Stars, Cloud, Sphere, MeshDistortMaterial, Float, Trail, PointMaterial, Points, Billboard, Text } from '@react-three/drei'
@@ -621,7 +623,7 @@ export default function UniversePage() {
                   <div style={{ fontSize: '0.65rem', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.25)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>{industry}</div>
                   <div style={{ fontSize: '3.5rem', fontWeight: 900, color, lineHeight: 1, marginBottom: '1.5rem', textShadow: '0 0 30px ' + color + '60' }}>{roi}</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                    {[['Missed leads/week', missed], ['Avg job value', '$' + value.toLocaleString()], ['Annual loss', '$' + annual.toLocaleString()], ['Thrive annual cost', '$' + cost.toLocaleString()]].map(([label, val], i) => (
+                    {[['Missed leads/week', missed], ['Avg job value', '\$' + value.toLocaleString()], ['Annual loss', '\$' + annual.toLocaleString()], ['Thrive annual cost', '\$' + cost.toLocaleString()]].map(([label, val], i) => (
                       <div key={String(label)} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', padding: i >= 2 ? '0.6rem 0.75rem' : '0', background: i === 2 ? 'rgba(239,68,68,0.08)' : i === 3 ? 'rgba(123,63,228,0.08)' : 'transparent', borderRadius: i >= 2 ? 8 : 0, border: i === 2 ? '1px solid rgba(239,68,68,0.15)' : i === 3 ? '1px solid rgba(123,63,228,0.15)' : 'none' }}>
                         <span style={{ color: i === 2 ? 'rgba(239,68,68,0.7)' : i === 3 ? 'rgba(165,110,255,0.7)' : 'rgba(255,255,255,0.3)' }}>{String(label)}</span>
                         <span style={{ fontWeight: 700, color: i === 2 ? '#fca5a5' : i === 3 ? '#A56EFF' : 'white' }}>{String(val)}</span>
@@ -645,9 +647,9 @@ export default function UniversePage() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
               {[
-                { name: 'SMB', setup: '$4,997', monthly: '$997/mo', desc: 'Roofing, landscaping, and service businesses under 20 people.', color: '#60a5fa', highlighted: false },
-                { name: 'MID-MARKET', setup: '$2,997', monthly: '$797/mo', desc: 'Construction, insurance, and growing service companies.', color: '#A56EFF', highlighted: true },
-                { name: 'COMMERCIAL', setup: '$14,997', monthly: '$2,497/mo', desc: 'Large commercial operations, multi-location, enterprise-ready.', color: '#f59e0b', highlighted: false },
+                { name: 'SMB', setup: '\$4,997', monthly: '\$997/mo', desc: 'Roofing, landscaping, and service businesses under 20 people.', color: '#60a5fa', highlighted: false },
+                { name: 'MID-MARKET', setup: '\$2,997', monthly: '\$797/mo', desc: 'Construction, insurance, and growing service companies.', color: '#A56EFF', highlighted: true },
+                { name: 'COMMERCIAL', setup: '\$14,997', monthly: '\$2,497/mo', desc: 'Large commercial operations, multi-location, enterprise-ready.', color: '#f59e0b', highlighted: false },
               ].map(({ name, setup, monthly, desc, color, highlighted }) => (
                 <div key={name} style={{ ...glass, padding: '2rem', border: highlighted ? '1px solid rgba(165,110,255,0.35)' : '1px solid rgba(255,255,255,0.05)', boxShadow: highlighted ? '0 0 50px rgba(123,63,228,0.2)' : 'none', transform: highlighted ? 'scale(1.02)' : 'none' }}>
                   <div style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color, fontWeight: 700, marginBottom: '1rem' }}>{name}</div>
@@ -689,7 +691,7 @@ export default function UniversePage() {
 
       </div>
 
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -701,7 +703,11 @@ export default function UniversePage() {
           0% { background-position: 0% 50%; }
           100% { background-position: 200% 50%; }
         }
-      `}</style>
+      \`}</style>
     </div>
   )
 }
+`
+
+fs.writeFileSync('app/page.tsx', universe, 'utf8')
+console.log('Real universe homepage created')
