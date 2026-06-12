@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: 'Thrive Automation Agency | AI Systems for Modern Business',
   description: 'AI-powered automation systems for modern businesses. We build custom AI workflows that save time, generate leads, and scale your operations.',
   openGraph: {
-    title: 'Thrive Automation Agency', | AI Systems for Modern Business',
+    title: 'Thrive Automation Agency | AI Systems for Modern Business',
     description: 'We build custom AI automation systems that recover missed leads, streamline operations, and scale revenue. Serving Chicago and beyond.',
     url: 'https://www.thriveautomation.agency',
     siteName: 'Thrive Automation Agency',
@@ -47,3 +47,4 @@ export default function RootLayout({
     </html>
   );
 }
+

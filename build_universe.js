@@ -1,4 +1,6 @@
-'use client'
+﻿const fs = require('fs')
+
+const universe = `'use client'
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
@@ -425,15 +427,15 @@ export default function UniversePage() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
                     <span style={{ color: 'rgba(255,255,255,0.35)' }}>Avg job value</span>
-                    <span style={{ fontWeight: 700 }}>${value.toLocaleString()}</span>
+                    <span style={{ fontWeight: 700 }}>\${value.toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', padding: '0.75rem', background: 'rgba(239,68,68,0.08)', borderRadius: 8, border: '1px solid rgba(239,68,68,0.15)' }}>
                     <span style={{ color: 'rgba(239,68,68,0.7)' }}>Annual loss</span>
-                    <span style={{ color: '#fca5a5', fontWeight: 700 }}>${annual.toLocaleString()}</span>
+                    <span style={{ color: '#fca5a5', fontWeight: 700 }}>\${annual.toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', padding: '0.75rem', background: 'rgba(123,63,228,0.08)', borderRadius: 8, border: '1px solid rgba(123,63,228,0.15)' }}>
                     <span style={{ color: 'rgba(165,110,255,0.7)' }}>Thrive annual cost</span>
-                    <span style={{ color: '#A56EFF', fontWeight: 700 }}>${cost.toLocaleString()}</span>
+                    <span style={{ color: '#A56EFF', fontWeight: 700 }}>\${cost.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -497,12 +499,16 @@ export default function UniversePage() {
         </div>
       </section>
 
-      <style>{`
+      <style>{\`
         @keyframes orbPulse {
           0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(123,63,228,0.6); }
           50% { transform: scale(1.05); box-shadow: 0 0 80px rgba(123,63,228,0.9); }
         }
-      `}</style>
+      \`}</style>
     </div>
   )
 }
+`
+
+fs.writeFileSync('app/page.tsx', universe, 'utf8')
+console.log('Universe homepage created')
