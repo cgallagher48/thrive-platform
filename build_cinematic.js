@@ -1,4 +1,6 @@
-'use client'
+﻿const fs = require('fs')
+
+const page = `'use client'
 import { useRef, useState, useEffect, Suspense, useMemo } from 'react'
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber'
 import { Stars, useTexture, MeshDistortMaterial, Float } from '@react-three/drei'
@@ -861,7 +863,7 @@ export default function UniversePage() {
 
       </div>
 
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -873,7 +875,11 @@ export default function UniversePage() {
           0% { background-position: 0% 50%; }
           100% { background-position: 200% 50%; }
         }
-      `}</style>
+      \`}</style>
     </div>
   )
 }
+`
+
+fs.writeFileSync('app/page.tsx', page, 'utf8')
+console.log('Cinematic universe built')
