@@ -569,11 +569,20 @@ const SECTIONS = [
 export default function UniversePage() {
   const [activeSection, setActiveSection] = useState(0)
   const [hyperspace, setHyperspace] = useState(false)
+  const [phase, setPhase] = useState('loading')
   const [mounted, setMounted] = useState(false)
   const sectionsRef = useRef<(HTMLElement | null)[]>([])
   const sunRef = useRef<THREE.Mesh>(null)
 
-  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => {
+    setMounted(true)
+    const seen = localStorage.getItem('thriveIntroSeen')
+    if (seen) {
+      setPhase('site')
+    } else {
+      setPhase('intro')
+    }
+  }, [])
 
   const navigateTo = (index: number) => {
     setHyperspace(true)
@@ -604,6 +613,17 @@ export default function UniversePage() {
 
   return (
     <div style={{ background: '#010006', color: 'white', fontFamily: "'Inter', system-ui, sans-serif", overflowX: 'hidden' }}>
+            {/* Webb deep field background */}
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 0,
+        backgroundImage: "url('/textures/webb-deep-field.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        filter: 'brightness(0.28) saturate(1.6)',
+        transform: 'scale(1.06)',
+      }} />
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, background: 'radial-gradient(ellipse at center, rgba(1,0,8,0.15) 0%, rgba(1,0,8,0.6) 100%)' }} />
+
       {/* Fixed cinematic 3D canvas */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
         {mounted && (
