@@ -1,0 +1,7 @@
+﻿const fs = require('fs')
+const content = fs.readFileSync('app/page.tsx', 'utf8')
+const start = content.indexOf('// ATLAS Dyson Megastructure\nfunction DysonStructure')
+const end = content.indexOf('\nfunction SpaceDust', start)
+console.log('Start:', start, 'End:', end)
+console.log('Section preview:', content.slice(start, start+50))
+console.log('End preview:', content.slice(end, end+50))

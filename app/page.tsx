@@ -8,155 +8,109 @@ import { gsap } from 'gsap'
 import { BlendFunction, KernelSize } from 'postprocessing'
 import { generatePlanetTexture, generateNebulaTexture } from '@/lib/textureGen'
 
-// ATLAS Dyson Megastructure
-function DysonStructure({ sunRef }: { sunRef: React.RefObject<THREE.Mesh> }) {
+// ATLAS - Orbital Command Station
+function ATLASMegastructure() {
   const coreRef = useRef<THREE.Mesh>(null)
-  const ring1Ref = useRef<THREE.Mesh>(null)
-  const ring2Ref = useRef<THREE.Mesh>(null)
-  const ring3Ref = useRef<THREE.Mesh>(null)
-  const shellRef = useRef<THREE.Mesh>(null)
-  const glowRef = useRef<THREE.Mesh>(null)
+  const innerShellRef = useRef<THREE.Mesh>(null)
+  const outerShellRef = useRef<THREE.Mesh>(null)
+  const disc1Ref = useRef<THREE.Mesh>(null)
+  const disc2Ref = useRef<THREE.Mesh>(null)
+  const groupRef = useRef<THREE.Group>(null)
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime()
-    if (coreRef.current) {
-      coreRef.current.rotation.y = t * 0.1
-      coreRef.current.rotation.z = Math.sin(t * 0.2) * 0.05
+    if (groupRef.current) groupRef.current.rotation.y = t * 0.018
+    if (innerShellRef.current) {
+      innerShellRef.current.rotation.y = -t * 0.025
+      innerShellRef.current.rotation.x = t * 0.012
     }
-    if (ring1Ref.current) {
-      ring1Ref.current.rotation.z = t * 0.4
-      ring1Ref.current.rotation.x = Math.PI / 2.2 + Math.sin(t * 0.15) * 0.1
+    if (outerShellRef.current) {
+      outerShellRef.current.rotation.z = t * 0.008
+      outerShellRef.current.rotation.x = -t * 0.006
     }
-    if (ring2Ref.current) {
-      ring2Ref.current.rotation.z = -t * 0.28
-      ring2Ref.current.rotation.y = t * 0.05
-      ring2Ref.current.rotation.x = Math.PI / 3
-    }
-    if (ring3Ref.current) {
-      ring3Ref.current.rotation.z = t * 0.18
-      ring3Ref.current.rotation.x = Math.PI / 4
-      ring3Ref.current.rotation.y = -t * 0.08
-    }
-    if (shellRef.current) {
-      shellRef.current.rotation.y = t * 0.03
-    }
-    if (glowRef.current) {
-      const s = 1 + Math.sin(t * 1.2) * 0.06
-      glowRef.current.scale.setScalar(s)
-    }
-    if (sunRef.current) {
-      sunRef.current.rotation.y = t * 0.05
-    }
+    if (disc1Ref.current) disc1Ref.current.rotation.z = t * 0.06
+    if (disc2Ref.current) disc2Ref.current.rotation.z = -t * 0.04
+    if (coreRef.current) coreRef.current.scale.setScalar(1 + Math.sin(t * 1.2) * 0.04)
   })
 
   return (
-    <group position={[0, 0, 0]}>
-      {/* Central energy core - the artificial star */}
-      <mesh ref={sunRef}>
-        <sphereGeometry args={[1.0, 64, 64]} />
+    <group ref={groupRef} position={[2, -0.3, 0]}>
+      <mesh ref={coreRef}>
+        <sphereGeometry args={[0.38, 32, 32]} />
         <meshBasicMaterial color="#ffffff" />
       </mesh>
-
-      {/* Core glow layers */}
-      <mesh ref={coreRef}>
-        <sphereGeometry args={[1.05, 64, 64]} />
-        <MeshDistortMaterial
-          color="#7B3FE4"
-          emissive="#A56EFF"
-          emissiveIntensity={3}
-          distort={0.4}
-          speed={3}
-          transparent
-          opacity={0.9}
-        />
-      </mesh>
-
-      <mesh ref={glowRef}>
-        <sphereGeometry args={[1.6, 32, 32]} />
-        <meshBasicMaterial color="#5B21B6" transparent opacity={0.06} side={THREE.BackSide} />
-      </mesh>
-
       <mesh>
-        <sphereGeometry args={[2.2, 32, 32]} />
-        <meshBasicMaterial color="#3B0F8C" transparent opacity={0.03} side={THREE.BackSide} />
+        <sphereGeometry args={[0.52, 32, 32]} />
+        <meshBasicMaterial color="#C4B5FD" transparent opacity={0.12} side={THREE.BackSide} />
       </mesh>
-
-      {/* Dyson rings - massive structural rings */}
-      <mesh ref={ring1Ref}>
-        <torusGeometry args={[3.2, 0.08, 32, 256]} />
-        <meshStandardMaterial
-          color="#A56EFF"
-          emissive="#7B3FE4"
-          emissiveIntensity={1.5}
-          metalness={0.9}
-          roughness={0.1}
-        />
+      <mesh ref={innerShellRef}>
+        <icosahedronGeometry args={[1.1, 4]} />
+        <meshStandardMaterial color="#1a0a3a" emissive="#4C1D95" emissiveIntensity={0.6} metalness={0.95} roughness={0.2} />
       </mesh>
-
-      <mesh ref={ring2Ref}>
-        <torusGeometry args={[4.5, 0.06, 32, 256]} />
-        <meshStandardMaterial
-          color="#60a5fa"
-          emissive="#3B82F6"
-          emissiveIntensity={1.2}
-          metalness={0.95}
-          roughness={0.05}
-        />
+      <mesh ref={outerShellRef}>
+        <icosahedronGeometry args={[1.15, 4]} />
+        <meshStandardMaterial color="#7C3AED" emissive="#5B21B6" emissiveIntensity={0.8} metalness={0.9} roughness={0.1} wireframe transparent opacity={0.18} />
       </mesh>
-
-      <mesh ref={ring3Ref}>
-        <torusGeometry args={[5.8, 0.04, 32, 256]} />
-        <meshStandardMaterial
-          color="#C4B5FD"
-          emissive="#8B5CF6"
-          emissiveIntensity={0.8}
-          metalness={0.9}
-          roughness={0.1}
-        />
+      <mesh ref={disc1Ref} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[1.5, 0.09, 8, 128]} />
+        <meshStandardMaterial color="#0a0520" emissive="#6D28D9" emissiveIntensity={2.0} metalness={0.98} roughness={0.02} />
       </mesh>
-
-      {/* Energy lattice shell */}
-      <mesh ref={shellRef}>
-        <icosahedronGeometry args={[2.6, 2]} />
-        <meshStandardMaterial
-          color="#7B3FE4"
-          emissive="#5B21B6"
-          emissiveIntensity={0.4}
-          wireframe
-          transparent
-          opacity={0.15}
-        />
+      <mesh ref={disc2Ref} rotation={[Math.PI / 2.4, 0.3, 0]}>
+        <torusGeometry args={[1.95, 0.05, 8, 128]} />
+        <meshStandardMaterial color="#050215" emissive="#3B82F6" emissiveIntensity={1.6} metalness={0.98} roughness={0.02} />
       </mesh>
-
-      {/* Orbital energy streams */}
-      <OrbitalStream radius={3.2} count={600} color="#A56EFF" speed={1.2} />
-      <OrbitalStream radius={4.5} count={400} color="#60a5fa" speed={-0.8} />
-      <OrbitalStream radius={5.8} count={300} color="#C4B5FD" speed={0.5} />
-
-      {/* Lights */}
-      <pointLight color="#A56EFF" intensity={12} distance={40} />
-      <pointLight color="#60a5fa" intensity={4} distance={25} position={[3, 2, 2]} />
-      <pointLight color="#ffffff" intensity={8} distance={15} />
+      {[0, Math.PI/2, Math.PI, Math.PI*1.5].map((angle, i) => (
+        <mesh key={i} position={[Math.cos(angle) * 1.3, 0, Math.sin(angle) * 1.3]}>
+          <boxGeometry args={[0.05, 0.05, 0.45]} />
+          <meshStandardMaterial color="#1a0a3a" emissive="#7C3AED" emissiveIntensity={0.8} metalness={0.99} roughness={0.01} />
+        </mesh>
+      ))}
+      {[0,1,2,3,4,5].map((i) => {
+        const a = (i / 6) * Math.PI * 2
+        return (
+          <mesh key={i} position={[Math.cos(a) * 1.1, Math.sin(i * 0.8) * 0.6, Math.sin(a) * 1.1]}>
+            <sphereGeometry args={[0.035, 8, 8]} />
+            <meshBasicMaterial color="#A78BFA" />
+          </mesh>
+        )
+      })}
+      <mesh position={[0, 1.2, 0]}>
+        <cylinderGeometry args={[0.4, 0.5, 0.07, 8]} />
+        <meshStandardMaterial color="#0d0526" emissive="#4C1D95" emissiveIntensity={0.5} metalness={0.95} roughness={0.15} />
+      </mesh>
+      <mesh position={[0, -1.2, 0]}>
+        <cylinderGeometry args={[0.5, 0.4, 0.07, 8]} />
+        <meshStandardMaterial color="#0d0526" emissive="#4C1D95" emissiveIntensity={0.5} metalness={0.95} roughness={0.15} />
+      </mesh>
+      <EnergyStream radius={1.52} count={500} color="#A78BFA" speed={0.9} tilt={Math.PI/2} />
+      <EnergyStream radius={1.97} count={350} color="#60A5FA" speed={-0.6} tilt={Math.PI/2.4} />
+      <pointLight color="#A78BFA" intensity={12} distance={20} />
+      <pointLight color="#ffffff" intensity={5} distance={8} />
+      <pointLight color="#3B82F6" intensity={2} distance={15} position={[3, 2, 1]} />
+      <pointLight color="#6D28D9" intensity={3} distance={12} position={[-2, -1, 2]} />
     </group>
   )
 }
 
-function OrbitalStream({ radius, count, color, speed }: { radius: number; count: number; color: string; speed: number }) {
+function EnergyStream({ radius, count, color, speed, tilt = 0 }: { radius: number; count: number; color: string; speed: number; tilt?: number }) {
   const ref = useRef<THREE.Points>(null)
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3)
     for (let i = 0; i < count; i++) {
       const angle = (i / count) * Math.PI * 2
-      const jitter = (Math.random() - 0.5) * 0.3
+      const jitter = (Math.random() - 0.5) * 0.06
       pos[i * 3] = Math.cos(angle) * (radius + jitter)
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 0.2
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 0.08
       pos[i * 3 + 2] = Math.sin(angle) * (radius + jitter)
     }
     return pos
   }, [count, radius])
 
-  useFrame((state) => {
-    if (ref.current) ref.current.rotation.y = state.clock.getElapsedTime() * speed * 0.25
+  useFrame((s) => {
+    if (ref.current) {
+      ref.current.rotation.y = s.clock.getElapsedTime() * speed * 0.15
+      ref.current.rotation.x = tilt
+    }
   })
 
   return (
@@ -164,141 +118,10 @@ function OrbitalStream({ radius, count, color, speed }: { radius: number; count:
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial color={color} size={0.018} transparent opacity={0.8} sizeAttenuation />
+      <pointsMaterial color={color} size={0.008} transparent opacity={0.85} sizeAttenuation />
     </points>
   )
 }
-
-// Photorealistic planet with procedural texture
-function Planet({ position, type, size, rotSpeed, tilt = 0, hasRings = false, ringColor = '#d4a76a', atmosphereColor = '#4488ff', atmosphereOpacity = 0.08 }: any) {
-  const meshRef = useRef<THREE.Mesh>(null)
-  const atmRef = useRef<THREE.Mesh>(null)
-  const groupRef = useRef<THREE.Group>(null)
-  const texture = useMemo(() => {
-    if (typeof window === 'undefined') return null
-    return generatePlanetTexture(type, Math.random() * 100)
-  }, [type])
-
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime()
-    if (meshRef.current) meshRef.current.rotation.y = t * rotSpeed
-    if (groupRef.current) groupRef.current.position.y = position[1] + Math.sin(t * 0.2 + position[0]) * 0.08
-  })
-
-  return (
-    <group ref={groupRef} position={position} rotation={[0, 0, tilt]}>
-      <mesh ref={meshRef} castShadow receiveShadow>
-        <sphereGeometry args={[size, 128, 128]} />
-        <meshStandardMaterial
-          map={texture || undefined}
-          roughness={0.85}
-          metalness={0.05}
-        />
-      </mesh>
-
-      {/* Atmospheric scattering */}
-      <mesh ref={atmRef}>
-        <sphereGeometry args={[size * 1.06, 64, 64]} />
-        <meshBasicMaterial color={atmosphereColor} transparent opacity={atmosphereOpacity} side={THREE.BackSide} />
-      </mesh>
-
-      {/* Thin rim atmosphere */}
-      <mesh>
-        <sphereGeometry args={[size * 1.12, 32, 32]} />
-        <meshBasicMaterial color={atmosphereColor} transparent opacity={atmosphereOpacity * 0.3} side={THREE.BackSide} />
-      </mesh>
-
-      {/* Planetary rings */}
-      {hasRings && (
-        <>
-          <mesh rotation={[Math.PI / 2.1, 0, 0.2]}>
-            <torusGeometry args={[size * 1.8, size * 0.4, 3, 256]} />
-            <meshStandardMaterial color={ringColor} transparent opacity={0.55} roughness={0.9} side={THREE.DoubleSide} />
-          </mesh>
-          <mesh rotation={[Math.PI / 2.1, 0, 0.2]}>
-            <torusGeometry args={[size * 2.3, size * 0.15, 3, 256]} />
-            <meshStandardMaterial color={ringColor} transparent opacity={0.25} roughness={0.9} side={THREE.DoubleSide} />
-          </mesh>
-        </>
-      )}
-    </group>
-  )
-}
-
-// Volumetric nebula using layered transparent meshes
-function VolumetricNebula() {
-  const textures = useMemo(() => {
-    if (typeof window === 'undefined') return []
-    return [
-      generateNebulaTexture('rgb(75,0,130)', 'rgb(100,0,180)', 1),
-      generateNebulaTexture('rgb(30,0,80)', 'rgb(60,20,120)', 2),
-      generateNebulaTexture('rgb(0,20,80)', 'rgb(20,40,120)', 3),
-      generateNebulaTexture('rgb(80,20,0)', 'rgb(140,40,10)', 4),
-    ]
-  }, [])
-
-  const nebulaClouds = [
-    { pos: [-25, 8, -70] as [number,number,number], scale: [30, 20, 15] as [number,number,number], rot: [0.3, 0.5, 0.1] as [number,number,number], texIdx: 0 },
-    { pos: [30, -12, -85] as [number,number,number], scale: [35, 25, 20] as [number,number,number], rot: [-0.2, -0.3, 0.2] as [number,number,number], texIdx: 1 },
-    { pos: [-10, 20, -100] as [number,number,number], scale: [40, 30, 20] as [number,number,number], rot: [0.1, 0.8, -0.1] as [number,number,number], texIdx: 2 },
-    { pos: [15, -5, -60] as [number,number,number], scale: [20, 15, 12] as [number,number,number], rot: [0.5, -0.4, 0.3] as [number,number,number], texIdx: 3 },
-  ]
-
-  return (
-    <group>
-      {nebulaClouds.map((cloud, i) => (
-        <mesh key={i} position={cloud.pos} rotation={cloud.rot as any} scale={cloud.scale}>
-          <sphereGeometry args={[1, 16, 16]} />
-          <meshBasicMaterial
-            map={textures[cloud.texIdx] || undefined}
-            transparent
-            opacity={0.12}
-            side={THREE.DoubleSide}
-            depthWrite={false}
-          />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
-// Realistic asteroid belt
-function AsteroidBelt({ radius, width, count, ySpread }: { radius: number; width: number; count: number; ySpread: number }) {
-  const ref = useRef<THREE.InstancedMesh>(null)
-  const dummy = useMemo(() => new THREE.Object3D(), [])
-
-  useEffect(() => {
-    if (!ref.current) return
-    for (let i = 0; i < count; i++) {
-      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.3
-      const r = radius + (Math.random() - 0.5) * width
-      dummy.position.set(
-        Math.cos(angle) * r,
-        (Math.random() - 0.5) * ySpread,
-        Math.sin(angle) * r
-      )
-      dummy.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI)
-      const s = Math.random() * 0.08 + 0.01
-      dummy.scale.setScalar(s)
-      dummy.updateMatrix()
-      ref.current.setMatrixAt(i, dummy.matrix)
-    }
-    ref.current.instanceMatrix.needsUpdate = true
-  }, [count, radius, width, ySpread, dummy])
-
-  useFrame((state) => {
-    if (ref.current) ref.current.rotation.y = state.clock.getElapsedTime() * 0.015
-  })
-
-  return (
-    <instancedMesh ref={ref} args={[undefined, undefined, count]} castShadow>
-      <dodecahedronGeometry args={[1, 1]} />
-      <meshStandardMaterial color="#5A4A35" roughness={0.95} metalness={0.1} />
-    </instancedMesh>
-  )
-}
-
-// Space dust particles
 function SpaceDust() {
   const ref = useRef<THREE.Points>(null)
   const count = 3000
@@ -453,7 +276,7 @@ function DistantGalaxy({ position }: { position: [number,number,number] }) {
 }
 
 // Main scene
-function Scene({ section, hyperspace, sunRef }: { section: number; hyperspace: boolean; sunRef: React.RefObject<THREE.Mesh> }) {
+function Scene({ section, hyperspace }: { section: number; hyperspace: boolean }) {
   return (
     <>
       <CinematicCamera section={section} hyperspace={hyperspace} />
@@ -466,20 +289,15 @@ function Scene({ section, hyperspace, sunRef }: { section: number; hyperspace: b
       {/* Space dust */}
       <SpaceDust />
 
-      {/* Volumetric nebula clouds */}
-      <VolumetricNebula />
+
 
       {/* ATLAS Dyson Megastructure */}
-      <DysonStructure sunRef={sunRef} />
+      <ATLASMegastructure />
 
-      {/* Asteroid belt around ATLAS */}
-      <AsteroidBelt radius={8} width={3} count={500} ySpread={1.2} />
 
-      {/* Outer asteroid belt */}
-      <AsteroidBelt radius={18} width={4} count={300} ySpread={2} />
 
       {/* Solar system - photorealistic planets */}
-      <Planet
+      {/* <Planet
         position={[-12, 2, -4]}
         type="rocky"
         size={0.55}
@@ -541,7 +359,7 @@ function Scene({ section, hyperspace, sunRef }: { section: number; hyperspace: b
       />
 
       {/* Distant galaxies */}
-      <DistantGalaxy position={[60, 20, -150]} />
+      {/* <DistantGalaxy position={[60, 20, -150]} />
       <DistantGalaxy position={[-80, -15, -180]} />
 
       {/* Hyperspace effect */}
@@ -572,8 +390,6 @@ export default function UniversePage() {
   const [phase, setPhase] = useState('loading')
   const [mounted, setMounted] = useState(false)
   const sectionsRef = useRef<(HTMLElement | null)[]>([])
-  const sunRef = useRef<THREE.Mesh>(null)
-
   useEffect(() => {
     setMounted(true)
     const seen = localStorage.getItem('thriveIntroSeen')
@@ -639,7 +455,7 @@ export default function UniversePage() {
             dpr={[1, 1.5]}
           >
             <Suspense fallback={null}>
-              <Scene section={activeSection} hyperspace={hyperspace} sunRef={sunRef as React.RefObject<THREE.Mesh>} />
+              <Scene section={activeSection} hyperspace={hyperspace}  />
               <EffectComposer>
                 <Bloom
                   luminanceThreshold={0.15}
