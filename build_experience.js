@@ -1,4 +1,6 @@
-'use client'
+﻿const fs = require('fs')
+
+const page = `'use client'
 import { useRef, useState, useEffect, Suspense, useMemo } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'
@@ -42,12 +44,12 @@ function AtlasCore({ atlasState }: { atlasState: number }) {
     if (outerRef.current) {
       outerRef.current.rotation.x = t * 0.03
       outerRef.current.rotation.z = -t * 0.04
-      if (outerRef.current.material && !Array.isArray(outerRef.current.material)) { (outerRef.current.material as any).opacity = 0.1 + s * 0.04 }
+      outerRef.current.material.opacity = 0.1 + s * 0.04
     }
     if (pulseRef.current) {
       const pulse = Math.sin(t * 2) * 0.5 + 0.5
       pulseRef.current.scale.setScalar(1.2 + pulse * (0.3 + s * 0.2))
-      if (pulseRef.current.material && !Array.isArray(pulseRef.current.material)) { (pulseRef.current.material as any).opacity = (0.04 + s * 0.02) * (1 - pulse * 0.5) }
+      pulseRef.current.material.opacity = (0.04 + s * 0.02) * (1 - pulse * 0.5)
     }
   })
 
@@ -112,7 +114,7 @@ function NeuralNetwork({ atlasState }: { atlasState: number }) {
       groupRef.current.rotation.y = Math.sin(t * 0.05) * 0.2
     }
     if (linesRef.current) {
-      if (!Array.isArray(linesRef.current.material)) { (linesRef.current.material as any).opacity = 0.1 + atlasState * 0.12 }
+      linesRef.current.material.opacity = 0.1 + atlasState * 0.12
     }
   })
 
@@ -150,7 +152,7 @@ function NetworkNode({ position, color, label, active, index }: any) {
       meshRef.current.scale.setScalar(s)
     }
     if (glowRef.current) {
-      (glowRef.current.material as THREE.MeshBasicMaterial).opacity = active ? 0.15 + Math.sin(t * 1.5 + index) * 0.05 : 0.03
+      glowRef.current.material.opacity = active ? 0.15 + Math.sin(t * 1.5 + index) * 0.05 : 0.03
     }
   })
 
@@ -302,9 +304,8 @@ function DeadNode({ position, phase, size }: { position: [number,number,number];
   const ref = useRef<THREE.Mesh>(null)
   useFrame((state) => {
     if (ref.current) {
-      const sinVal = Math.sin(state.clock.getElapsedTime() * 3 + phase)
-      const mat = ref.current.material as THREE.MeshBasicMaterial
-      mat.opacity = sinVal > 0.7 ? 0.3 : 0.05
+      const flicker = Math.sin(state.clock.getElapsedTime() * 3 + phase) > 0.7 ? 0.3 : 0.05
+      ref.current.material.opacity = flicker
     }
   })
   return (
@@ -712,7 +713,7 @@ export default function ThrivePage() {
         </button>
       )}
 
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -721,7 +722,11 @@ export default function ThrivePage() {
         ::-webkit-scrollbar-track { background: #010006; }
         ::-webkit-scrollbar-thumb { background: rgba(109,40,217,0.2); border-radius: 1px; }
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
-      `}</style>
+      \`}</style>
     </div>
   )
 }
+`
+
+fs.writeFileSync('app/page.tsx', page, 'utf8')
+console.log('BUILT')
