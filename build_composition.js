@@ -1,4 +1,6 @@
-'use client'
+﻿const fs = require('fs')
+
+const page = `'use client'
 import { useRef, useState, useEffect, Suspense, useMemo, useCallback } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { EffectComposer, Bloom, Vignette, ChromaticAberration } from '@react-three/postprocessing'
@@ -889,14 +891,18 @@ export default function Page() {
         </button>
       )}
 
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         body{background:#010006;-webkit-font-smoothing:antialiased;overflow-x:hidden}
         ::-webkit-scrollbar{width:2px}
         ::-webkit-scrollbar-track{background:#010006}
         ::-webkit-scrollbar-thumb{background:rgba(109,40,217,0.12);border-radius:1px}
-      `}</style>
+      \`}</style>
     </div>
   )
 }
+`
+
+fs.writeFileSync('app/page.tsx', page, 'utf8')
+console.log('COMPOSITION BUILT')
