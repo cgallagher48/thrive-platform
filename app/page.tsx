@@ -184,7 +184,7 @@ export default function Page() {
                 <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.65, maxWidth: 480 }}>Purpose-built for roofing, HVAC, masonry, and contracting. Designed to capture every lead, book every appointment, and collect every dollar.</p>
                 <a href="https://calendly.com/thriveautomation" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500, whiteSpace: 'nowrap', paddingTop: '0.2rem' }}>
                   <span style={{ fontSize: '0.65rem', background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.25)', color: '#a78bfa', padding: '0.15rem 0.5rem', borderRadius: 4, fontWeight: 700 }}>New</span>
-                  Get a Free Audit ->
+                  Get a Free Audit &rarr;
                 </a>
               </div>
             </FadeUp>
@@ -346,3 +346,4 @@ export default function Page() {
     </div>
   )
 }
+
