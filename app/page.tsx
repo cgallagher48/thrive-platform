@@ -173,11 +173,11 @@ export default function Page() {
           <a href="https://calendly.com/thriveautomation" target="_blank" rel="noopener noreferrer" style={{ background: '#fff', color: '#08090a', padding: '0.4rem 1.1rem', borderRadius: 20, textDecoration: 'none', fontWeight: 700, fontSize: '0.78rem' }}>Sign up</a>
         </div>
       </nav>
-      <section style={{ padding: '140px 2.5rem 60px', maxWidth: 1200, margin: '0 auto' }}>
+      <section style={{ padding: '120px 2.5rem 50px', maxWidth: 1200, margin: '0 auto' }}>
         {mounted && (
           <>
             <FadeUp>
-              <h1 style={{ fontSize: 'clamp(3rem, 6.5vw, 6rem)', fontWeight: 900, lineHeight: 1.02, letterSpacing: '-0.04em', marginBottom: '1.5rem', color: 'rgba(255,255,255,0.95)', maxWidth: 900 }}>The automation system<br />for service businesses.</h1>
+              <h1 style={{ fontSize: 'clamp(2.4rem, 5vw, 4.8rem)', fontWeight: 900, lineHeight: 1.02, letterSpacing: '-0.04em', marginBottom: '1.5rem', color: 'rgba(255,255,255,0.95)', maxWidth: 900 }}>The automation system<br />for service businesses.</h1>
             </FadeUp>
             <FadeUp delay={100}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
@@ -346,5 +346,7 @@ export default function Page() {
     </div>
   )
 }
+
+
 
 
