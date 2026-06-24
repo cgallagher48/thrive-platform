@@ -14,7 +14,7 @@ function useInView() {
   return { ref, visible }
 }
 
-function FadeUp({ children, delay = 0 }) {
+function FadeUp({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const { ref, visible } = useInView()
   return (
     <div ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'opacity 0.7s ease ' + delay + 'ms, transform 0.7s ease ' + delay + 'ms' }}>
@@ -346,4 +346,5 @@ export default function Page() {
     </div>
   )
 }
+
 
