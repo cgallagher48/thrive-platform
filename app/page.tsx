@@ -200,7 +200,7 @@ const SECTIONS = [
   },
   {
     num: '3.0',
-    headline: 'Collect every dollar you've earned.',
+    headline: 'Collect every dollar you have earned.',
     body: 'Invoices sent automatically on job completion. Payment reminders until collected. Every dollar tracked and surfaced so nothing slips through.',
     label: 'Revenue Operations',
     subs: [['3.1', 'Auto Invoicing'], ['3.2', 'Payment Reminders'], ['3.3', 'Revenue Tracking'], ['3.4', 'Review Generation']],
@@ -432,3 +432,4 @@ export default function Page() {
     </div>
   )
 }
+
