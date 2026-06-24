@@ -1,4 +1,6 @@
-'use client'
+const fs = require('fs')
+
+const page = `'use client'
 import { useState, useEffect, useRef } from 'react'
 
 function useInView() {
@@ -334,7 +336,7 @@ export default function Page() {
         </div>
         <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.1)' }}>Intelligent Operations Automations</div>
       </footer>
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -342,7 +344,11 @@ export default function Page() {
         ::-webkit-scrollbar { width: 2px; }
         ::-webkit-scrollbar-track { background: #08090a; }
         ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.2); border-radius: 2px; }
-      `}</style>
+      \`}</style>
     </div>
   )
 }
+`
+
+fs.writeFileSync('app/page.tsx', page)
+console.log('Done:', fs.readFileSync('app/page.tsx','utf8').split('\n').length, 'lines')
