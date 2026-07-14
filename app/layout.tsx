@@ -13,11 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Thrive Automation Agency | AI Systems for Modern Business',
-  description: 'AI-powered automation systems for modern businesses. We build custom AI workflows that save time, generate leads, and scale your operations.',
+  metadataBase: new URL('https://www.thriveautomation.agency'),
+  title: 'Thrive Automation Agency | Intelligent Operations Systems',
+  description: 'We build intelligent operations systems — one dashboard, an AI brain, and automation engines configured to your business.',
   openGraph: {
-    title: 'Thrive Automation Agency | AI Systems for Modern Business',
-    description: 'We build custom AI automation systems that recover missed leads, streamline operations, and scale revenue. Serving Chicago and beyond.',
+    title: 'Thrive Automation Agency | Intelligent Operations Systems',
+    description: 'We build intelligent operations systems — one dashboard, an AI brain, and automation engines configured to your business.',
     url: 'https://www.thriveautomation.agency',
     siteName: 'Thrive Automation Agency',
     type: 'website',
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Thrive Automation Agency',
-    description: 'AI-powered automation for modern businesses.',
+    description: 'We build intelligent operations systems — one dashboard, an AI brain, and automation engines configured to your business.',
   },
   icons: {
     icon: '/favicon.ico',
