@@ -44,6 +44,8 @@ function scoreColor(s: number) {
 export default function CommandCenter() {
     const [unlocked, setUnlocked] = useState(false);
 const [pin, setPin] = useState("");
+  const [unlockError, setUnlockError] = useState("");
+  const [unlocking, setUnlocking] = useState(false);
   const [tab, setTab] = useState("atlas");
   const [leads, setLeads] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
@@ -68,7 +70,28 @@ const [pin, setPin] = useState("");
   const [newCampaign, setNewCampaign] = useState({ name: "", platform: "", messages_sent: "", responses: "", leads_generated: "", status: "Active", notes: "" });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { loadAll(); }, []);
+  // Only load data (and generate the AI briefing) once the access code has
+  // been verified -- otherwise every anonymous visitor triggers an API call.
+  useEffect(() => { if (unlocked) loadAll(); }, [unlocked]);
+
+  async function tryUnlock() {
+    if (!pin || unlocking) return;
+    setUnlocking(true);
+    setUnlockError("");
+    try {
+      const res = await fetch("/api/atlas", { headers: { "x-atlas-secret": pin } });
+      if (res.status === 204) {
+        setUnlocked(true);
+      } else if (res.status === 503) {
+        setUnlockError("Server missing ATLAS_SHARED_SECRET env var.");
+      } else {
+        setUnlockError("Wrong access code.");
+      }
+    } catch {
+      setUnlockError("Could not reach the server. Try again.");
+    }
+    setUnlocking(false);
+  }
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [atlasMessages]);
 
   async function loadAll() {
@@ -97,12 +120,15 @@ if (!unlocked) return (
       <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>⚡</div>
       <h2 style={{ color: "#fff", marginBottom: "1.5rem", fontSize: "1.1rem" }}>Thrive Command Center</h2>
       <input type="password" value={pin} onChange={e => setPin(e.target.value)}
-        onKeyDown={e => e.key === "Enter" && pin === "thrive2026casey" && setUnlocked(true)}
+        onKeyDown={e => e.key === "Enter" && tryUnlock()}
         placeholder="Enter access code"
         style={{ width: "100%", padding: "0.75rem", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#fff", fontSize: "0.9rem", outline: "none", marginBottom: "1rem", boxSizing: "border-box" as const, textAlign: "center" }} />
-      <button onClick={() => pin === "thrive2026casey" && setUnlocked(true)}
-        style={{ width: "100%", padding: "0.75rem", background: "linear-gradient(135deg, #7c3aed, #a855f7)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, cursor: "pointer" }}>
-        Access
+      {unlockError && (
+        <div style={{ color: "#f87171", fontSize: "0.8rem", marginBottom: "1rem" }}>{unlockError}</div>
+      )}
+      <button onClick={tryUnlock} disabled={unlocking}
+        style={{ width: "100%", padding: "0.75rem", background: "linear-gradient(135deg, #7c3aed, #a855f7)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, cursor: unlocking ? "wait" : "pointer", opacity: unlocking ? 0.7 : 1 }}>
+        {unlocking ? "Checking..." : "Access"}
       </button>
     </div>
   </div>
@@ -117,7 +143,7 @@ if (!unlocked) return (
     try {
       const res = await fetch("/api/atlas", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-api-key": process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY || "", "anthropic-version": "2023-06-01" },
+        headers: { "Content-Type": "application/json", "x-atlas-secret": pin },
         body: JSON.stringify({
           model: ANTHROPIC_MODEL,
           max_tokens: 300,
@@ -158,7 +184,7 @@ if (!unlocked) return (
     try {
       const res = await fetch("/api/atlas", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-api-key": process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY || "", "anthropic-version": "2023-06-01" },
+        headers: { "Content-Type": "application/json", "x-atlas-secret": pin },
         body: JSON.stringify({
           model: ANTHROPIC_MODEL,
           max_tokens: 400,
