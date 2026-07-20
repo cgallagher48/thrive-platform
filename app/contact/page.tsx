@@ -33,14 +33,14 @@ export default function ContactPage() {
                   sales sequence. Pick a time that works and we&apos;ll talk
                   through your operation.
                 </p>
-                <h2 className="mt-10 text-sm font-semibold uppercase tracking-wider text-blue-800">
+                <h2 className="mt-10 text-sm font-semibold uppercase tracking-wider text-violet-600">
                   What we cover on the call
                 </h2>
                 <ul className="mt-4 space-y-3">
                   {CALL_POINTS.map((p) => (
                     <li key={p} className="flex gap-3 text-slate-700">
                       <svg
-                        className="mt-1 h-4 w-4 flex-shrink-0 text-blue-800"
+                        className="mt-1 h-4 w-4 flex-shrink-0 text-violet-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                         aria-hidden="true"
@@ -59,7 +59,7 @@ export default function ContactPage() {
                   Prefer email?{" "}
                   <a
                     href={`mailto:${CONTACT_EMAIL}`}
-                    className="font-semibold text-blue-800 hover:text-blue-900"
+                    className="font-semibold text-violet-600 hover:text-violet-700"
                   >
                     {CONTACT_EMAIL}
                   </a>
@@ -79,7 +79,7 @@ export default function ContactPage() {
                     href={CALENDLY_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-semibold text-blue-800 hover:text-blue-900"
+                    className="font-semibold text-violet-600 hover:text-violet-700"
                   >
                     Open Calendly directly →
                   </a>

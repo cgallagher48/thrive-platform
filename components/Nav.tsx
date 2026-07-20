@@ -32,7 +32,7 @@ export default function Nav() {
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
         <Link href="/" onClick={closeAll} className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900">
           <Image src="/logo.png" alt="Thrive Automation logo" width={36} height={36} className="h-9 w-9" />
-          Thrive<span className="text-blue-800"> Automation</span>
+          Thrive<span className="text-violet-600"> Automation</span>
         </Link>
 
         {/* Desktop */}
@@ -62,7 +62,7 @@ export default function Nav() {
                 <Link
                   href="/systems"
                   onClick={closeAll}
-                  className="block rounded-md px-3 py-2 text-sm font-semibold text-blue-800 hover:bg-slate-50"
+                  className="block rounded-md px-3 py-2 text-sm font-semibold text-violet-600 hover:bg-slate-50"
                 >
                   All Systems →
                 </Link>
@@ -95,7 +95,7 @@ export default function Nav() {
             href={CALENDLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md bg-blue-800 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-900"
+            className="rounded-md bg-gradient-to-r from-violet-600 to-purple-500 px-4 py-2 text-sm font-semibold text-white hover:from-violet-700 hover:to-purple-600"
           >
             Book a Call
           </a>
@@ -142,7 +142,7 @@ export default function Nav() {
           </button>
           {mobileSystemsOpen && (
             <div className="mb-2 border-l border-slate-200 pl-4">
-              <Link href="/systems" onClick={closeAll} className="block py-2 text-sm font-semibold text-blue-800">
+              <Link href="/systems" onClick={closeAll} className="block py-2 text-sm font-semibold text-violet-600">
                 All Systems →
               </Link>
               {ENGINES.map((e) => (
@@ -168,7 +168,7 @@ export default function Nav() {
             href={CALENDLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 block rounded-md bg-blue-800 px-4 py-3 text-center text-sm font-semibold text-white"
+            className="mt-3 block rounded-md bg-gradient-to-r from-violet-600 to-purple-500 px-4 py-3 text-center text-sm font-semibold text-white"
           >
             Book a Call
           </a>

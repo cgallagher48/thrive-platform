@@ -29,9 +29,9 @@ export default function SystemsPage() {
               {BASE.map((b) => (
                 <div
                   key={b.slug}
-                  className="rounded-xl border-2 border-blue-800/20 bg-slate-50 p-8"
+                  className="rounded-xl border-2 border-violet-600/20 bg-slate-50 p-8"
                 >
-                  <p className="text-xs font-semibold uppercase tracking-wider text-blue-800">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-violet-600">
                     Always included
                   </p>
                   <h2 className="mt-2 text-xl font-bold text-slate-900">
@@ -70,7 +70,7 @@ export default function SystemsPage() {
                         </span>
                       )}
                     </div>
-                    <p className="mt-2 text-sm font-medium text-blue-800">
+                    <p className="mt-2 text-sm font-medium text-violet-600">
                       {e.tagline}
                     </p>
                   </div>
@@ -86,7 +86,7 @@ export default function SystemsPage() {
                         href={CALENDLY_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-5 inline-block text-sm font-semibold text-blue-800 hover:text-blue-900"
+                        className="mt-5 inline-block text-sm font-semibold text-violet-600 hover:text-violet-700"
                       >
                         Talk to us about {e.name} →
                       </a>
@@ -99,12 +99,12 @@ export default function SystemsPage() {
         </section>
 
         {/* CTA band */}
-        <section className="bg-blue-900">
+        <section className="bg-gradient-to-r from-violet-600 to-purple-500">
           <div className="mx-auto max-w-6xl px-5 py-16 text-center sm:px-8 sm:py-20">
             <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Not sure which engines you need?
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-blue-100">
+            <p className="mx-auto mt-4 max-w-xl text-lg text-violet-100">
               That&apos;s what the call is for. We&apos;ll look at how your
               business runs and recommend only what fits.
             </p>
@@ -112,7 +112,7 @@ export default function SystemsPage() {
               href={CALENDLY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-block rounded-md bg-white px-7 py-3.5 text-base font-semibold text-blue-900 hover:bg-blue-50"
+              className="mt-8 inline-block rounded-md bg-white px-7 py-3.5 text-base font-semibold text-violet-700 hover:bg-violet-50"
             >
               Book a Call
             </a>

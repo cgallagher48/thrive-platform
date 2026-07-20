@@ -40,7 +40,7 @@ export default function Home() {
                 href={CALENDLY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block rounded-md bg-blue-800 px-7 py-3.5 text-base font-semibold text-white hover:bg-blue-900"
+                className="inline-block rounded-md bg-gradient-to-r from-violet-600 to-purple-500 px-7 py-3.5 text-base font-semibold text-white hover:from-violet-700 hover:to-purple-600"
               >
                 Book a Call
               </a>
@@ -51,7 +51,7 @@ export default function Home() {
         {/* Always included */}
         <section className="bg-slate-50">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-800">
+            <p className="text-xs font-semibold uppercase tracking-wider text-violet-600">
               Included with every build
             </p>
             <h2 className="mt-3 max-w-2xl text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -64,7 +64,7 @@ export default function Home() {
                   className="rounded-xl border border-slate-200 bg-white p-8"
                 >
                   <h3 className="text-xl font-bold text-slate-900">{b.name}</h3>
-                  <p className="mt-1 text-sm font-medium text-blue-800">
+                  <p className="mt-1 text-sm font-medium text-violet-600">
                     {b.tagline}
                   </p>
                   <p className="mt-4 leading-relaxed text-slate-600">
@@ -79,7 +79,7 @@ export default function Home() {
         {/* How it works */}
         <section id="how-it-works" className="scroll-mt-16 bg-white">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-800">
+            <p className="text-xs font-semibold uppercase tracking-wider text-violet-600">
               How it works
             </p>
             <h2 className="mt-3 max-w-2xl text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -88,7 +88,7 @@ export default function Home() {
             <div className="mt-10 grid gap-10 md:grid-cols-3">
               {STEPS.map((s, i) => (
                 <div key={s.title}>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-800 text-base font-bold text-white">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-purple-500 text-base font-bold text-white">
                     {i + 1}
                   </div>
                   <h3 className="mt-4 text-lg font-bold text-slate-900">
@@ -104,7 +104,7 @@ export default function Home() {
         {/* Engines */}
         <section className="bg-slate-50">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-800">
+            <p className="text-xs font-semibold uppercase tracking-wider text-violet-600">
               Our Systems
             </p>
             <h2 className="mt-3 max-w-2xl text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -131,7 +131,7 @@ export default function Home() {
                   </p>
                   <Link
                     href={`/systems#${e.slug}`}
-                    className="mt-4 text-sm font-semibold text-blue-800 hover:text-blue-900"
+                    className="mt-4 text-sm font-semibold text-violet-600 hover:text-violet-700"
                   >
                     Learn More →
                   </Link>
@@ -144,7 +144,7 @@ export default function Home() {
         {/* Who we serve */}
         <section className="bg-white">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-800">
+            <p className="text-xs font-semibold uppercase tracking-wider text-violet-600">
               Who we serve
             </p>
             <h2 className="mt-3 max-w-3xl text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -159,12 +159,12 @@ export default function Home() {
         </section>
 
         {/* CTA band */}
-        <section className="bg-blue-900">
+        <section className="bg-gradient-to-r from-violet-600 to-purple-500">
           <div className="mx-auto max-w-6xl px-5 py-16 text-center sm:px-8 sm:py-20">
             <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
               See what this looks like for your business.
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-blue-100">
+            <p className="mx-auto mt-4 max-w-xl text-lg text-violet-100">
               Book a call. We&apos;ll walk through your operation and show you
               exactly which engines fit.
             </p>
@@ -172,7 +172,7 @@ export default function Home() {
               href={CALENDLY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-block rounded-md bg-white px-7 py-3.5 text-base font-semibold text-blue-900 hover:bg-blue-50"
+              className="mt-8 inline-block rounded-md bg-white px-7 py-3.5 text-base font-semibold text-violet-700 hover:bg-violet-50"
             >
               Book a Call
             </a>

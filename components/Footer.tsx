@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="md:col-span-2">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900">
             <Image src="/logo.png" alt="Thrive Automation logo" width={32} height={32} className="h-8 w-8" />
-            Thrive<span className="text-blue-800"> Automation</span>
+            Thrive<span className="text-violet-600"> Automation</span>
           </div>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-600">
             We build intelligent operations systems — one dashboard, an AI brain,
@@ -22,7 +22,7 @@ export default function Footer() {
             href={CALENDLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-5 inline-block rounded-md bg-blue-800 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-900"
+            className="mt-5 inline-block rounded-md bg-gradient-to-r from-violet-600 to-purple-500 px-4 py-2 text-sm font-semibold text-white hover:from-violet-700 hover:to-purple-600"
           >
             Book a Call
           </a>
