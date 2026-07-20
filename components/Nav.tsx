@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { CALENDLY_URL, ENGINES } from "@/lib/systems";
 
@@ -29,7 +30,8 @@ export default function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" onClick={closeAll} className="text-lg font-bold tracking-tight text-slate-900">
+        <Link href="/" onClick={closeAll} className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900">
+          <Image src="/logo.png" alt="Thrive Automation logo" width={36} height={36} className="h-9 w-9" />
           Thrive<span className="text-blue-800"> Automation</span>
         </Link>
 
