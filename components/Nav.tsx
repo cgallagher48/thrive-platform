@@ -91,6 +91,9 @@ export default function Nav() {
           <Link href="/contact" className="text-sm font-medium text-slate-700 hover:text-slate-900">
             Contact
           </Link>
+          <Link href="/dashboard/login" className="text-sm font-medium text-slate-700 hover:text-slate-900">
+            Login
+          </Link>
           <a
             href={CALENDLY_URL}
             target="_blank"
@@ -163,6 +166,9 @@ export default function Nav() {
           </Link>
           <Link href="/contact" onClick={closeAll} className="block py-3 text-sm font-medium text-slate-800">
             Contact
+          </Link>
+          <Link href="/dashboard/login" onClick={closeAll} className="block py-3 text-sm font-medium text-slate-800">
+            Login
           </Link>
           <a
             href={CALENDLY_URL}
