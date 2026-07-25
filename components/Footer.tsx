@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { CALENDLY_URL, CONTACT_EMAIL, ENGINES } from "@/lib/systems";
+import LogoMark from "@/components/LogoMark";
 
 export default function Footer() {
   const half = Math.ceil(ENGINES.length / 2);
@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900">
-            <Image src="/logo.png" alt="Thrive Automation logo" width={32} height={32} className="h-8 w-8" />
+            <LogoMark size={32} />
             Thrive<span className="text-violet-600"> Automation</span>
           </div>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-600">

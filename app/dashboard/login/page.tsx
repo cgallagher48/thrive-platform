@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
+import LogoMark from "@/components/LogoMark";
 
 export default function DashboardLoginPage() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function DashboardLoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 flex justify-center">
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900">
-            <Image src="/logo.png" alt="Thrive Automation logo" width={36} height={36} className="h-9 w-9" />
+            <LogoMark size={36} />
             Thrive<span className="text-violet-600"> Automation</span>
           </Link>
         </div>
