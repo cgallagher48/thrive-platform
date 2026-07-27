@@ -280,3 +280,55 @@ export async function getDocumentSignedUrl(storagePath: string): Promise<string 
   if (error) return null;
   return data.signedUrl;
 }
+
+// Row delete only — the caller is responsible for removing the associated
+// storage object (see app/api/portal/documents/[id]/route.ts), since storage
+// operations live at the route layer for every other document flow too.
+export async function deleteDocument(id: string): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("documents").delete().eq("id", id);
+  if (error) throw new Error(`deleteDocument: ${error.message}`);
+}
+
+export type DocumentReplaceInput = {
+  familyId: string | null;
+  fileName: string;
+  fileType: "pdf" | "image";
+  storagePath: string;
+  extractionStatus: LibraryDocument["extractionStatus"];
+  extracted: ExtractedFields;
+  extractionRaw?: unknown;
+};
+
+// Retake/replace: same row, new file and freshly extracted fields. The
+// caller uploads the new file to a new storage path and removes the old one
+// (see the route) — this just swaps the row over to point at it.
+export async function replaceDocument(
+  id: string,
+  input: DocumentReplaceInput
+): Promise<LibraryDocument> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("documents")
+    .update({
+      family_id: input.familyId,
+      file_name: input.fileName,
+      file_type: input.fileType,
+      storage_path: input.storagePath,
+      extraction_status: input.extractionStatus,
+      extraction_raw: input.extractionRaw ?? null,
+      deceased_name: input.extracted.deceased_name,
+      family_name: input.extracted.family_name,
+      phone_numbers: input.extracted.phone_numbers,
+      service_date: input.extracted.service_date,
+      document_type: input.extracted.document_type,
+      address: input.extracted.address,
+      notes: input.extracted.notes,
+    })
+    .eq("id", id)
+    .select("*")
+    .single();
+
+  if (error || !data) throw new Error(`replaceDocument: ${error?.message ?? "update failed"}`);
+  return mapDocumentRow(data);
+}

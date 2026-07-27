@@ -32,7 +32,11 @@ export default async function LibraryDocumentPage({
         </p>
       </div>
 
-      <DocumentDetail doc={doc} previewUrl={previewUrl} />
+      {/* Keyed on storagePath so a retake/replace (which always lands on a
+          fresh storage path) forces a clean remount — local state like the
+          category selector and the correction form's default values would
+          otherwise keep showing the replaced document's old content. */}
+      <DocumentDetail key={doc.storagePath ?? doc.id} doc={doc} previewUrl={previewUrl} />
     </div>
   );
 }

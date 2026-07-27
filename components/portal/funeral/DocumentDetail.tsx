@@ -1,6 +1,7 @@
 "use client";
 
 import { startTransition, useActionState, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import DocumentIcon from "@/components/dashboard/DocumentIcon";
 import { updateDocumentFields, type UpdateDocumentState } from "@/lib/portal/funeral/actions";
 import { DOCUMENT_TYPES, type LibraryDocument, type DocumentType } from "@/lib/portal/funeral/types";
@@ -66,9 +67,19 @@ export default function DocumentDetail({
   previewUrl: string | null;
 }) {
   const { extracted } = doc;
+  const router = useRouter();
   const [category, setCategory] = useState<DocumentType | "">(extracted.document_type ?? "");
   const [state, formAction, pending] = useActionState(updateDocumentFields, initialState);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const [replacing, setReplacing] = useState(false);
+  const [replaceError, setReplaceError] = useState<string | null>(null);
+  const retakeCameraInputRef = useRef<HTMLInputElement>(null);
+  const retakeFileInputRef = useRef<HTMLInputElement>(null);
 
   const categoryStyle = category ? CATEGORY_STYLES[category] : "bg-slate-100 text-slate-500";
 
@@ -81,6 +92,43 @@ export default function DocumentDetail({
     const data = new FormData(formRef.current ?? undefined);
     data.set("document_type", nextCategory);
     startTransition(() => formAction(data));
+  }
+
+  async function handleDelete() {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch(`/api/portal/documents/${doc.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error ?? "Delete failed.");
+      }
+      router.push("/dashboard/library");
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "Something went wrong.");
+      setDeleting(false);
+    }
+  }
+
+  async function handleReplaceFile(file: File) {
+    setReplacing(true);
+    setReplaceError(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`/api/portal/documents/${doc.id}`, { method: "POST", body: formData });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error ?? "Replace failed.");
+      }
+      // The route already swapped the row over to the new file and
+      // extraction — pull fresh doc + a fresh signed URL for it.
+      router.refresh();
+    } catch (err) {
+      setReplaceError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setReplacing(false);
+    }
   }
 
   return (
@@ -207,6 +255,77 @@ export default function DocumentDetail({
           )}
         </div>
         <p className="mt-3 text-center text-xs text-slate-400">{doc.fileName}</p>
+
+        <input
+          ref={retakeCameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleReplaceFile(file);
+            e.target.value = "";
+          }}
+        />
+        <input
+          ref={retakeFileInputRef}
+          type="file"
+          accept="application/pdf,image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleReplaceFile(file);
+            e.target.value = "";
+          }}
+        />
+
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 border-t border-slate-100 pt-4">
+          <button
+            onClick={() => retakeCameraInputRef.current?.click()}
+            disabled={replacing || deleting}
+            className="whitespace-nowrap rounded-md border border-violet-200 bg-white px-3 py-1.5 text-xs font-semibold text-violet-700 hover:bg-violet-50 disabled:opacity-60"
+          >
+            {replacing ? "Replacing…" : "📷 Retake"}
+          </button>
+          <button
+            onClick={() => retakeFileInputRef.current?.click()}
+            disabled={replacing || deleting}
+            className="whitespace-nowrap rounded-md border border-violet-200 bg-white px-3 py-1.5 text-xs font-semibold text-violet-700 hover:bg-violet-50 disabled:opacity-60"
+          >
+            {replacing ? "Replacing…" : "Replace File"}
+          </button>
+
+          {!confirmingDelete ? (
+            <button
+              onClick={() => setConfirmingDelete(true)}
+              disabled={replacing || deleting}
+              className="whitespace-nowrap rounded-md border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60"
+            >
+              Delete document
+            </button>
+          ) : (
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <span className="text-xs font-medium text-red-700">Delete this document permanently?</span>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="whitespace-nowrap rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-60"
+              >
+                {deleting ? "Deleting…" : "Yes, delete"}
+              </button>
+              <button
+                onClick={() => setConfirmingDelete(false)}
+                disabled={deleting}
+                className="whitespace-nowrap rounded-md border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+        {replaceError && <p className="mt-2 text-center text-xs font-medium text-red-600">{replaceError}</p>}
+        {deleteError && <p className="mt-2 text-center text-xs font-medium text-red-600">{deleteError}</p>}
       </section>
     </div>
   );
