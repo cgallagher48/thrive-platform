@@ -4,30 +4,10 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 import { createClient } from "@/lib/supabase/server";
 import { extractDocumentFields } from "@/lib/portal/funeral/extraction";
 import { createDocument, getFamilies } from "@/lib/portal/funeral/data";
-import { convertToPdf, toPdfFileName } from "@/lib/portal/documents/convert-to-pdf";
+import { convertToPdf, detectFileFormat, toPdfFileName } from "@/lib/portal/documents/convert-to-pdf";
 import type { ExtractedFields } from "@/lib/portal/funeral/types";
 
 const MAX_BYTES = 20 * 1024 * 1024; // 20MB
-const ALLOWED_TYPES = new Set([
-  "application/pdf",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-  "image/heic",
-  "image/heif",
-]);
-
-function isAllowedFile(mediaType: string, fileName: string): boolean {
-  if (ALLOWED_TYPES.has(mediaType)) return true;
-  // Some browsers send a generic type for HEIC/HEIF photos instead of
-  // image/heic — fall back to the extension for exactly that case, rather
-  // than accepting application/octet-stream broadly.
-  if (!mediaType || mediaType === "application/octet-stream") {
-    return /\.(heic|heif)$/i.test(fileName);
-  }
-  return false;
-}
 
 function sanitizeFileName(name: string): string {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120);
@@ -60,21 +40,26 @@ export async function POST(req: NextRequest) {
   if (!file || !(file instanceof File)) {
     return NextResponse.json({ error: "No file provided." }, { status: 400 });
   }
-  if (!isAllowedFile(file.type, file.name)) {
-    return NextResponse.json(
-      { error: "Unsupported file type. Upload a PDF, JPEG, PNG, WEBP, GIF, or HEIC photo." },
-      { status: 400 }
-    );
-  }
   if (file.size > MAX_BYTES) {
     return NextResponse.json({ error: "File is too large (20MB max)." }, { status: 400 });
   }
 
   const originalBytes = Buffer.from(await file.arrayBuffer());
 
+  // Checked from the file's actual contents, not the browser-reported
+  // mediaType — that label is unreliable (some pickers mislabel HEIC as
+  // image/jpeg) and trusting it previously let non-JPEG bytes reach sharp's
+  // JPEG decoder.
+  if (detectFileFormat(originalBytes) === "unknown") {
+    return NextResponse.json(
+      { error: "Unsupported file type. Upload a PDF, JPEG, PNG, WEBP, GIF, or HEIC photo." },
+      { status: 400 }
+    );
+  }
+
   let pdfBytes: Uint8Array;
   try {
-    ({ pdfBytes } = await convertToPdf(originalBytes, file.type, file.name));
+    ({ pdfBytes } = await convertToPdf(originalBytes, file.name));
   } catch (error) {
     return NextResponse.json(
       { error: `Couldn't process that file: ${error instanceof Error ? error.message : "unknown error"}` },

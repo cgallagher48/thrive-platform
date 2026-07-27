@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { startTransition, useActionState, useRef, useState } from "react";
 import DocumentIcon from "@/components/dashboard/DocumentIcon";
-import type { LibraryDocument, DocumentType } from "@/lib/portal/funeral/types";
+import { updateDocumentFields, type UpdateDocumentState } from "@/lib/portal/funeral/actions";
+import { DOCUMENT_TYPES, type LibraryDocument, type DocumentType } from "@/lib/portal/funeral/types";
 
 const CATEGORY_STYLES: Record<DocumentType, string> = {
   "Death Certificate": "bg-slate-100 text-slate-700",
@@ -19,6 +20,10 @@ const STATUS_LABEL: Record<LibraryDocument["extractionStatus"], string> = {
   failed: "Extraction failed — needs manual review",
   skipped_no_api_key: "Not yet extracted — document extraction isn't connected",
 };
+
+const inputClass =
+  "mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500";
+const labelClass = "block text-sm font-medium text-slate-700";
 
 function InfoRow({ label, value, copyable }: { label: string; value: string; copyable?: boolean }) {
   const [copied, setCopied] = useState(false);
@@ -51,6 +56,8 @@ function InfoRow({ label, value, copyable }: { label: string; value: string; cop
   );
 }
 
+const initialState: UpdateDocumentState = { error: null, savedAt: null };
+
 export default function DocumentDetail({
   doc,
   previewUrl,
@@ -59,36 +66,124 @@ export default function DocumentDetail({
   previewUrl: string | null;
 }) {
   const { extracted } = doc;
-  const categoryStyle = extracted.document_type ? CATEGORY_STYLES[extracted.document_type] : "bg-slate-100 text-slate-500";
+  const [category, setCategory] = useState<DocumentType | "">(extracted.document_type ?? "");
+  const [state, formAction, pending] = useActionState(updateDocumentFields, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const categoryStyle = category ? CATEGORY_STYLES[category] : "bg-slate-100 text-slate-500";
+
+  function handleCategoryChange(next: string) {
+    const nextCategory = next as DocumentType | "";
+    setCategory(nextCategory);
+    // Re-files the document immediately, independent of whatever's
+    // mid-edit in the other fields — read those straight off the form's
+    // live DOM values rather than waiting on React state to settle.
+    const data = new FormData(formRef.current ?? undefined);
+    data.set("document_type", nextCategory);
+    startTransition(() => formAction(data));
+  }
 
   return (
     <div className="grid gap-5 lg:grid-cols-2">
       <section className="rounded-xl border border-slate-200 bg-white p-6">
-        <h2 className="text-base font-bold text-slate-900">Extracted info</h2>
-        <p className="mt-1 text-xs text-slate-500">{STATUS_LABEL[doc.extractionStatus]}</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-base font-bold text-slate-900">Extracted info</h2>
+            <p className="mt-1 text-xs text-slate-500">{STATUS_LABEL[doc.extractionStatus]}</p>
+          </div>
+          <select
+            aria-label="Category"
+            value={category}
+            onChange={(e) => handleCategoryChange(e.target.value)}
+            className={`flex-shrink-0 rounded-md border border-slate-300 px-2 py-1 text-xs font-semibold outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 ${categoryStyle}`}
+          >
+            <option value="">Unsorted</option>
+            {DOCUMENT_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <div className="mt-3">
-          <InfoRow label="Deceased" value={extracted.deceased_name ?? "Not found"} />
-          <InfoRow label="Family / Next of Kin" value={extracted.family_name ?? "Not found"} />
-          {extracted.phone_numbers && extracted.phone_numbers.length > 0 ? (
-            extracted.phone_numbers.map((phone, i) => (
-              <InfoRow key={i} label={i === 0 ? "Phone" : `Phone ${i + 1}`} value={phone} copyable />
-            ))
-          ) : (
-            <InfoRow label="Phone" value="Not found" />
-          )}
-          <InfoRow label="Service Date" value={extracted.service_date ?? "Not found"} />
-          <InfoRow label="Document Type" value={extracted.document_type ?? "Unclassified"} />
+        <form ref={formRef} action={formAction} className="mt-4 space-y-4">
+          <input type="hidden" name="id" value={doc.id} />
+          <input type="hidden" name="document_type" value={category} />
+
+          <div>
+            <label className={labelClass} htmlFor="deceased_name">
+              Deceased
+            </label>
+            <input
+              id="deceased_name"
+              name="deceased_name"
+              defaultValue={extracted.deceased_name ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label className={labelClass} htmlFor="family_name">
+              Family / Next of Kin
+            </label>
+            <input
+              id="family_name"
+              name="family_name"
+              defaultValue={extracted.family_name ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label className={labelClass} htmlFor="phone_numbers">
+              Phone number(s)
+            </label>
+            <input
+              id="phone_numbers"
+              name="phone_numbers"
+              defaultValue={(extracted.phone_numbers ?? []).join(", ")}
+              placeholder="Separate multiple numbers with commas"
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label className={labelClass} htmlFor="service_date">
+              Service Date
+            </label>
+            <input
+              id="service_date"
+              name="service_date"
+              type="date"
+              defaultValue={extracted.service_date ?? ""}
+              className={inputClass}
+            />
+          </div>
+
           <InfoRow label="Address" value={extracted.address ?? "Not found"} />
           <InfoRow label="Notes" value={extracted.notes ?? "—"} />
-        </div>
+
+          <div className="flex items-center gap-3 pt-1">
+            <button
+              type="submit"
+              disabled={pending}
+              className="rounded-md bg-gradient-to-r from-violet-600 to-purple-500 px-4 py-2.5 text-sm font-semibold text-white hover:from-violet-700 hover:to-purple-600 disabled:opacity-60"
+            >
+              {pending ? "Saving…" : "Save corrections"}
+            </button>
+            {state.error && <p className="text-sm font-medium text-red-600">{state.error}</p>}
+            {!state.error && !pending && state.savedAt && (
+              <p className="text-sm font-medium text-emerald-600">Saved</p>
+            )}
+          </div>
+        </form>
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-base font-bold text-slate-900">Original scan</h2>
           <span className={`rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${categoryStyle}`}>
-            {extracted.document_type ?? "Unsorted"}
+            {category || "Unsorted"}
           </span>
         </div>
 

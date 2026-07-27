@@ -16,6 +16,7 @@ import type {
   InboxMessage,
   Review,
   ExtractedFields,
+  DocumentType,
 } from "./types";
 
 function mapFamilyRow(row: Record<string, unknown>): Family {
@@ -236,6 +237,40 @@ export async function createDocument(input: NewDocumentInput): Promise<LibraryDo
     .single();
 
   if (error || !data) throw new Error(`createDocument: ${error?.message ?? "insert failed"}`);
+  return mapDocumentRow(data);
+}
+
+export type DocumentCorrectionInput = {
+  documentType: DocumentType | null;
+  deceasedName: string | null;
+  familyName: string | null;
+  phoneNumbers: string[] | null;
+  serviceDate: string | null;
+};
+
+// Manual corrections to a document's category and extracted fields — the
+// same columns createDocument sets from the AI extraction, but overwritten
+// by a human. RLS's own WITH CHECK (company_id = current_company_id())
+// still applies to this update, even though we don't touch company_id here.
+export async function updateDocument(
+  id: string,
+  input: DocumentCorrectionInput
+): Promise<LibraryDocument> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("documents")
+    .update({
+      document_type: input.documentType,
+      deceased_name: input.deceasedName,
+      family_name: input.familyName,
+      phone_numbers: input.phoneNumbers,
+      service_date: input.serviceDate,
+    })
+    .eq("id", id)
+    .select("*")
+    .single();
+
+  if (error || !data) throw new Error(`updateDocument: ${error?.message ?? "update failed"}`);
   return mapDocumentRow(data);
 }
 

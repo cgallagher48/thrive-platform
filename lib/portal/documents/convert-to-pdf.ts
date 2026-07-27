@@ -3,6 +3,15 @@
 // through untouched; images are normalized to a JPEG and wrapped in a
 // single-page PDF sized to the image.
 //
+// Routing is decided from the file's actual magic bytes, never from the
+// browser-reported mediaType or the filename. Both are client-supplied and
+// unreliable in the exact way that matters here: some browsers/OS file
+// pickers mislabel HEIC photos as image/jpeg (or vice versa) instead of
+// reporting image/heic. Trusting that label previously sent real HEIC bytes
+// into sharp's JPEG decode path, which fails with a raw "SOI not found in
+// JPEG" error — sniffing the bytes ourselves closes that gap for every
+// format, not just HEIC.
+//
 // HEIC/HEIF (the default format for iPhone photos — exactly what "take a
 // photo directly" produces on a lot of devices) is handled by heic-convert
 // rather than sharp's native HEIC decode. Sharp's HEIC support depends on
@@ -21,33 +30,78 @@ export type ConversionResult = {
   converted: boolean;
 };
 
-const HEIC_MEDIA_TYPES = new Set(["image/heic", "image/heif"]);
+export type DetectedFormat = "pdf" | "jpeg" | "png" | "webp" | "gif" | "heic" | "unknown";
 
-function looksLikeHeic(mediaType: string, fileName: string): boolean {
-  if (HEIC_MEDIA_TYPES.has(mediaType.toLowerCase())) return true;
-  // Some browsers report a generic type for HEIC files instead of
-  // image/heic — fall back to the file extension in that case.
-  if (!mediaType || mediaType === "application/octet-stream") {
-    return /\.(heic|heif)$/i.test(fileName);
+// Major brands that show up on real-world HEIC/HEIF photos. iPhones write
+// "heic" as the major brand; a handful of other encoders/brand variants are
+// included for robustness.
+const HEIC_BRANDS = new Set([
+  "heic", "heix", "hevc", "hevx", "heim", "heis", "hevm", "hevs", "mif1", "msf1",
+]);
+
+export function detectFileFormat(bytes: Buffer): DetectedFormat {
+  if (bytes.length < 12) return "unknown";
+
+  if (bytes.subarray(0, 4).toString("ascii") === "%PDF") return "pdf";
+
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
+
+  if (
+    bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+  ) {
+    return "png";
   }
-  return false;
+
+  const gifHeader = bytes.subarray(0, 6).toString("ascii");
+  if (gifHeader === "GIF87a" || gifHeader === "GIF89a") return "gif";
+
+  if (
+    bytes.subarray(0, 4).toString("ascii") === "RIFF" &&
+    bytes.subarray(8, 12).toString("ascii") === "WEBP"
+  ) {
+    return "webp";
+  }
+
+  // ISO base media file format (HEIC/HEIF container): 4-byte box size, then
+  // "ftyp", then a 4-byte major brand.
+  if (bytes.subarray(4, 8).toString("ascii") === "ftyp") {
+    const majorBrand = bytes.subarray(8, 12).toString("ascii");
+    if (HEIC_BRANDS.has(majorBrand)) return "heic";
+  }
+
+  return "unknown";
 }
 
 export async function convertToPdf(
   bytes: Buffer,
-  mediaType: string,
   fileName: string
 ): Promise<ConversionResult> {
-  if (mediaType === "application/pdf") {
+  const format = detectFileFormat(bytes);
+
+  if (format === "pdf") {
     return { pdfBytes: bytes, converted: false };
   }
 
-  const jpegBytes: Buffer = looksLikeHeic(mediaType, fileName)
-    ? Buffer.from(await heicConvert({ buffer: bytes, format: "JPEG", quality: 0.92 }))
-    : await sharp(bytes).autoOrient().jpeg({ quality: 92 }).toBuffer();
+  if (format === "unknown") {
+    throw new Error(
+      `"${fileName}" doesn't look like a supported file (checked the file's actual contents, not just its name). Upload a PDF, JPEG, PNG, WEBP, GIF, or HEIC photo.`
+    );
+  }
 
+  const jpegBytes: Buffer =
+    format === "heic"
+      ? Buffer.from(await heicConvert({ buffer: bytes, format: "JPEG", quality: 0.92 }))
+      : await sharp(bytes).autoOrient().jpeg({ quality: 92 }).toBuffer();
+
+  // pdf-lib's JpegEmbedder builds its DataView from imageData.buffer without
+  // accounting for byteOffset, so it misreads the SOI marker whenever the
+  // buffer we hand it is a view into Node's shared allocator pool at a
+  // non-zero offset (routine for small Buffers, and exactly what
+  // heic-convert's output is once other conversions have run earlier in the
+  // same process). Wrapping in `new Uint8Array(...)` forces a fresh,
+  // exactly-sized ArrayBuffer at offset 0, which sidesteps the bug.
   const pdfDoc = await PDFDocument.create();
-  const jpgImage = await pdfDoc.embedJpg(jpegBytes);
+  const jpgImage = await pdfDoc.embedJpg(new Uint8Array(jpegBytes));
   const page = pdfDoc.addPage([jpgImage.width, jpgImage.height]);
   page.drawImage(jpgImage, { x: 0, y: 0, width: jpgImage.width, height: jpgImage.height });
 
