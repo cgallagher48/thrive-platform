@@ -22,7 +22,13 @@ export type ExtractionResult = {
 
 const EXTRACTION_SYSTEM_PROMPT = `You extract structured intake information from funeral home paperwork (death certificates, service contracts, intake forms, invoices, permits, and other related documents).
 
-Read the provided scan or PDF carefully and return only what is actually legible in the document. If a field is not present, not legible, or you are not confident about it, return null for that field — never guess, infer, or fabricate a value. Phone numbers should be returned in the format they appear in the document. document_type must be your best classification of the document into exactly one of: ${DOCUMENT_TYPES.join(", ")}.`;
+Four fields matter most and are usually present somewhere on this paperwork, even when worded differently document to document — look hard for each one under any of its common labels before giving up on it:
+- deceased_name — labeled as "Decedent", "Deceased", "Name of Deceased", or simply "Name" on a death certificate.
+- family_name — the next of kin / primary contact — labeled as "Next of Kin", "Informant", "Responsible Party", "Family Contact", or "Contact Name".
+- date_of_death — labeled as "Date of Death", "DOD", or phrased as "Died on" / "Date Died".
+- phone_numbers — any phone or contact number on the document, however labeled ("Phone", "Contact No.", "Tel.", "Cell").
+
+Read the provided scan or PDF carefully and return only what is actually legible in the document. If a field is not present, not legible, or you are not confident about it, return null for that field — never guess, infer, or fabricate a value, even for the four priority fields above. Phone numbers should be returned in the format they appear in the document. date_of_death and service_date are different things — do not confuse a funeral/visitation date with the date of death. document_type must be your best classification of the document into exactly one of: ${DOCUMENT_TYPES.join(", ")}.`;
 
 const EXTRACTION_SCHEMA = {
   type: "object",
@@ -34,7 +40,8 @@ const EXTRACTION_SCHEMA = {
       items: { type: "string" },
       description: "Phone numbers found in the document, as written.",
     },
-    service_date: { type: ["string", "null"], description: "Date of the service, in YYYY-MM-DD form if determinable." },
+    date_of_death: { type: ["string", "null"], description: "Date the person died, in YYYY-MM-DD form if determinable. Distinct from service_date." },
+    service_date: { type: ["string", "null"], description: "Date of the funeral/visitation service, in YYYY-MM-DD form if determinable. Distinct from date_of_death." },
     document_type: {
       type: ["string", "null"],
       enum: [...DOCUMENT_TYPES, null],
@@ -47,6 +54,7 @@ const EXTRACTION_SCHEMA = {
     "deceased_name",
     "family_name",
     "phone_numbers",
+    "date_of_death",
     "service_date",
     "document_type",
     "address",
@@ -59,6 +67,7 @@ const EMPTY_FIELDS: ExtractedFields = {
   deceased_name: null,
   family_name: null,
   phone_numbers: null,
+  date_of_death: null,
   service_date: null,
   document_type: null,
   address: null,
@@ -78,6 +87,7 @@ function normalizeFields(raw: unknown): ExtractedFields {
     phone_numbers: Array.isArray(r.phone_numbers)
       ? r.phone_numbers.filter((p): p is string => typeof p === "string")
       : null,
+    date_of_death: typeof r.date_of_death === "string" ? r.date_of_death : null,
     service_date: typeof r.service_date === "string" ? r.service_date : null,
     document_type: documentType,
     address: typeof r.address === "string" ? r.address : null,

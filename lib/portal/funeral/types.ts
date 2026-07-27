@@ -52,6 +52,7 @@ export type ExtractedFields = {
   deceased_name: string | null;
   family_name: string | null;
   phone_numbers: string[] | null;
+  date_of_death: string | null;
   service_date: string | null;
   document_type: DocumentType | null;
   address: string | null;

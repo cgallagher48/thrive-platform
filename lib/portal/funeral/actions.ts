@@ -37,6 +37,7 @@ export async function updateDocumentFields(
       deceasedName: String(formData.get("deceased_name") ?? "").trim() || null,
       familyName: String(formData.get("family_name") ?? "").trim() || null,
       phoneNumbers: parsePhoneNumbers(String(formData.get("phone_numbers") ?? "")),
+      dateOfDeath: String(formData.get("date_of_death") ?? "").trim() || null,
       serviceDate: String(formData.get("service_date") ?? "").trim() || null,
     });
   } catch (error) {

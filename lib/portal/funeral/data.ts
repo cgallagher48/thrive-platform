@@ -48,6 +48,7 @@ function mapDocumentRow(row: Record<string, unknown>): LibraryDocument {
     deceased_name: (row.deceased_name as string | null) ?? null,
     family_name: (row.family_name as string | null) ?? null,
     phone_numbers: (row.phone_numbers as string[] | null) ?? null,
+    date_of_death: (row.date_of_death as string | null) ?? null,
     service_date: (row.service_date as string | null) ?? null,
     document_type: (row.document_type as ExtractedFields["document_type"]) ?? null,
     address: (row.address as string | null) ?? null,
@@ -228,6 +229,7 @@ export async function createDocument(input: NewDocumentInput): Promise<LibraryDo
       deceased_name: input.extracted.deceased_name,
       family_name: input.extracted.family_name,
       phone_numbers: input.extracted.phone_numbers,
+      date_of_death: input.extracted.date_of_death,
       service_date: input.extracted.service_date,
       document_type: input.extracted.document_type,
       address: input.extracted.address,
@@ -245,6 +247,7 @@ export type DocumentCorrectionInput = {
   deceasedName: string | null;
   familyName: string | null;
   phoneNumbers: string[] | null;
+  dateOfDeath: string | null;
   serviceDate: string | null;
 };
 
@@ -264,6 +267,7 @@ export async function updateDocument(
       deceased_name: input.deceasedName,
       family_name: input.familyName,
       phone_numbers: input.phoneNumbers,
+      date_of_death: input.dateOfDeath,
       service_date: input.serviceDate,
     })
     .eq("id", id)

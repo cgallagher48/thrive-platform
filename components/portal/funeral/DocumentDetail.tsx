@@ -196,6 +196,19 @@ export default function DocumentDetail({
           </div>
 
           <div>
+            <label className={labelClass} htmlFor="date_of_death">
+              Date of Death
+            </label>
+            <input
+              id="date_of_death"
+              name="date_of_death"
+              type="date"
+              defaultValue={extracted.date_of_death ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
             <label className={labelClass} htmlFor="service_date">
               Service Date
             </label>
