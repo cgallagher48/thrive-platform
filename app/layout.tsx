@@ -29,9 +29,11 @@ export const metadata: Metadata = {
     title: 'Thrive Automation Agency',
     description: 'We build intelligent operations systems — one dashboard, an AI brain, and automation engines configured to your business.',
   },
-  icons: {
-    icon: '/favicon.ico',
-  },
+  // Icons are intentionally NOT set here — an explicit `icons` field
+  // overrides Next's file-convention auto-detection entirely (and since it
+  // only names one icon, the apple-touch-icon link never gets added
+  // either). app/icon.png and app/apple-icon.png are picked up
+  // automatically instead. See scripts/generate-icons.mjs.
 }
 
 export default function RootLayout({

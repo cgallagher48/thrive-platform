@@ -1,42 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useActionState } from "react";
 import Link from "next/link";
 import LogoMark from "@/components/LogoMark";
+import { signIn, type LoginState } from "./actions";
+
+const initialState: LoginState = { error: null };
 
 export default function DashboardLoginPage() {
-  const router = useRouter();
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/dashboard/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setError(data?.error ?? "Something went wrong. Try again.");
-        setLoading(false);
-        return;
-      }
-
-      router.push("/dashboard");
-      router.refresh();
-    } catch {
-      setError("Something went wrong. Try again.");
-      setLoading(false);
-    }
-  }
+  const [state, formAction, pending] = useActionState(signIn, initialState);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-5">
@@ -49,55 +21,64 @@ export default function DashboardLoginPage() {
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">
-            Client Portal
-          </h1>
+          <h1 className="text-xl font-bold tracking-tight text-slate-900">Client Portal</h1>
           <p className="mt-2 text-sm leading-relaxed text-slate-600">
-            This is a demo login so you can explore what your portal would
-            look like. No real business data is connected yet.
+            Sign in with the email and password we set up for you.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <form action={formAction} className="mt-6 space-y-4">
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-slate-700"
-              >
-                Demo password
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+                Email
               </label>
               <input
-                id="password"
-                type="password"
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
                 required
                 autoFocus
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                placeholder="you@yourbusiness.com"
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+                  Password
+                </label>
+                <Link href="/dashboard/forgot-password" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
+                  Forgot password?
+                </Link>
+              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
                 className="mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                 placeholder="Enter password"
               />
             </div>
 
-            {error && (
-              <p className="text-sm font-medium text-red-600">{error}</p>
-            )}
+            {state.error && <p className="text-sm font-medium text-red-600">{state.error}</p>}
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={pending}
               className="w-full rounded-md bg-gradient-to-r from-violet-600 to-purple-500 px-4 py-2.5 text-sm font-semibold text-white hover:from-violet-700 hover:to-purple-600 disabled:opacity-60"
             >
-              {loading ? "Signing in…" : "Sign In"}
+              {pending ? "Signing in…" : "Sign In"}
             </button>
           </form>
         </div>
 
         <p className="mt-6 text-center text-sm text-slate-500">
-          Not a client yet?{" "}
-          <Link
-            href="/contact"
-            className="font-semibold text-violet-600 hover:text-violet-700"
-          >
-            Book a call →
+          Just curious what this looks like?{" "}
+          <Link href="/dashboard/demo" className="font-semibold text-violet-600 hover:text-violet-700">
+            Try the demo →
           </Link>
         </p>
       </div>

@@ -17,7 +17,7 @@ export default async function CustomerProfilePage({
     <div className="space-y-6">
       <div>
         <Link
-          href="/dashboard/customers"
+          href="/dashboard/demo/customers"
           className="text-sm font-semibold text-violet-600 hover:text-violet-700"
         >
           ← All customers

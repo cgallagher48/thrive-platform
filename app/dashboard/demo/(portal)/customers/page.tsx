@@ -22,7 +22,7 @@ export default function DashboardCustomersPage() {
           {SAMPLE_CUSTOMERS.map((customer) => (
             <li key={customer.id}>
               <Link
-                href={`/dashboard/customers/${customer.id}`}
+                href={`/dashboard/demo/customers/${customer.id}`}
                 className="flex items-center justify-between gap-3 px-5 py-4 hover:bg-slate-50 sm:px-6"
               >
                 <div>

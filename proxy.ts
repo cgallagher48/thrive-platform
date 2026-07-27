@@ -1,35 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
-import { DASHBOARD_COOKIE_NAME, verifySessionToken } from "@/lib/dashboard-auth";
+import { updateSession } from "@/lib/supabase/proxy";
 
-const LOGIN_PATH = "/dashboard/login";
-const PUBLIC_API_PATHS = ["/api/dashboard/login"];
+// /dashboard/demo/** is the public prospect-facing demo — sample data only,
+// no auth, no Supabase reads. Everything else under /dashboard requires a
+// real signed-in session. /auth/confirm verifies password-reset/invite links
+// and must be reachable with no session at all (that's its entire job).
+const PUBLIC_PREFIXES = [
+  "/dashboard/demo",
+  "/dashboard/login",
+  "/dashboard/forgot-password",
+  "/auth/confirm",
+];
 
-export function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-  const session = req.cookies.get(DASHBOARD_COOKIE_NAME)?.value;
-  const isAuthed = verifySessionToken(session);
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
 
-  if (pathname.startsWith("/api/dashboard")) {
-    if (PUBLIC_API_PATHS.includes(pathname) || isAuthed) {
-      return NextResponse.next();
-    }
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-  if (pathname === LOGIN_PATH) {
-    if (isAuthed) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
+  // The demo must have zero dependency on Supabase — it has to work even
+  // before a Supabase project exists (e.g. on first deploy) or if it's ever
+  // briefly misconfigured. Skip touching Supabase entirely for it.
+  if (pathname === "/dashboard/demo" || pathname.startsWith("/dashboard/demo/")) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith("/dashboard") && !isAuthed) {
-    return NextResponse.redirect(new URL(LOGIN_PATH, req.url));
+  // Always run this first for everything else — it refreshes the session
+  // cookie and must complete before any response is generated, or a
+  // completed token refresh has nowhere to be written and the next request
+  // refreshes again.
+  const { response, userId } = await updateSession(request);
+
+  if (isPublicPath(pathname)) {
+    if (pathname === "/dashboard/login" && userId) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+    return response;
   }
 
-  return NextResponse.next();
+  if (!userId) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return NextResponse.redirect(new URL("/dashboard/login", request.url));
+  }
+
+  // must_change_password and company/config gating happen in
+  // app/dashboard/(portal)/layout.tsx — that's a single DB read per
+  // navigation (cached per-request), rather than a query on every proxy
+  // invocation including asset-adjacent requests.
+  return response;
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/auth/:path*", "/api/portal/:path*"],
 };
