@@ -102,8 +102,23 @@ export async function convertToPdf(
   // exactly-sized ArrayBuffer at offset 0, which sidesteps the bug.
   const pdfDoc = await PDFDocument.create();
   const jpgImage = await pdfDoc.embedJpg(new Uint8Array(jpegBytes));
-  const page = pdfDoc.addPage([jpgImage.width, jpgImage.height]);
-  page.drawImage(jpgImage, { x: 0, y: 0, width: jpgImage.width, height: jpgImage.height });
+
+  // The PDF page size is declared in points (72/inch), NOT pixels. A modern
+  // phone photo's pixel dimensions (e.g. 3024x4032) used directly as point
+  // dimensions produces an absurd 42"x56" virtual page. Viewers that render
+  // near "actual size" instead of aggressively fitting to their container
+  // — routine for PDFs embedded in a small <iframe>, which is exactly how
+  // this shows up in the Company Files preview — then display only a tiny,
+  // dark, massively zoomed-in corner of that oversized page instead of the
+  // full document. Scaling to a plausible scan DPI keeps the page a sane
+  // physical size for viewers to fit correctly, with zero loss of
+  // resolution: the embedded image's actual pixel data is untouched, only
+  // its declared page size changes.
+  const ASSUMED_SCAN_DPI = 300;
+  const pageWidth = (jpgImage.width / ASSUMED_SCAN_DPI) * 72;
+  const pageHeight = (jpgImage.height / ASSUMED_SCAN_DPI) * 72;
+  const page = pdfDoc.addPage([pageWidth, pageHeight]);
+  page.drawImage(jpgImage, { x: 0, y: 0, width: pageWidth, height: pageHeight });
 
   const pdfBytes = await pdfDoc.save();
   return { pdfBytes, converted: true };
