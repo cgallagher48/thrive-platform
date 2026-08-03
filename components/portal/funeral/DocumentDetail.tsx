@@ -6,6 +6,7 @@ import DocumentIcon from "@/components/dashboard/DocumentIcon";
 import { updateDocumentFields, saveGlanceFieldOrder, type UpdateDocumentState } from "@/lib/portal/funeral/actions";
 import { DOCUMENT_TYPES, type LibraryDocument, type DocumentType, type ExtractedFields } from "@/lib/portal/funeral/types";
 import { FIELD_BY_KEY, type FieldDef, resolveFieldSections } from "@/lib/portal/funeral/field-schema";
+import { compressImageForUpload } from "@/lib/portal/documents/client-compress";
 
 const CATEGORY_STYLES: Record<DocumentType, string> = {
   "Death Certificate": "bg-slate-100 text-slate-700",
@@ -198,8 +199,9 @@ export default function DocumentDetail({
     setReplacing(true);
     setReplaceError(null);
     try {
+      const uploadFile = await compressImageForUpload(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", uploadFile);
       const res = await fetch(`/api/portal/documents/${doc.id}`, { method: "POST", body: formData });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

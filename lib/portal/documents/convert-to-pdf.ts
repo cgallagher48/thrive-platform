@@ -88,10 +88,23 @@ export async function convertToPdf(
     );
   }
 
-  const jpegBytes: Buffer =
+  // HEIC decodes through heic-convert (see the module comment above), every
+  // other format decodes straight into sharp — but both paths converge on
+  // the same sharp enhancement pass below, so a HEIC photo (the common
+  // iPhone "take photo" case) gets the same treatment as a JPEG one.
+  const decodedJpeg: Buffer =
     format === "heic"
       ? Buffer.from(await heicConvert({ buffer: bytes, format: "JPEG", quality: 0.92 }))
-      : await sharp(bytes).autoOrient().jpeg({ quality: 92 }).toBuffer();
+      : bytes;
+
+  // normalize() contrast-stretches to the full tonal range — the direct fix
+  // for dim/washed-out phone photos — and sharpen() crisps up text edges.
+  // Deliberately NOT a hard B&W/threshold pass: that's the CamScanner
+  // "magic color" look, but on a real document (faint handwriting, a
+  // signature, a letterhead) a badly-tuned threshold can blow out content
+  // that actually matters. Keeping this a contrast/sharpen pass only is the
+  // safe default; true black-on-white thresholding can be a later toggle.
+  const jpegBytes = await sharp(decodedJpeg).autoOrient().normalize().sharpen().jpeg({ quality: 92 }).toBuffer();
 
   // pdf-lib's JpegEmbedder builds its DataView from imageData.buffer without
   // accounting for byteOffset, so it misreads the SOI marker whenever the

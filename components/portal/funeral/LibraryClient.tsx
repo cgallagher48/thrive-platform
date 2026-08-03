@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import DocumentIcon from "@/components/dashboard/DocumentIcon";
 import { DOCUMENT_TYPES, type DocumentType, type LibraryDocument } from "@/lib/portal/funeral/types";
+import { compressImageForUpload } from "@/lib/portal/documents/client-compress";
 
 const CATEGORY_STYLES: Record<DocumentType, string> = {
   "Death Certificate": "bg-slate-100 text-slate-700",
@@ -62,8 +63,9 @@ export default function LibraryClient({ documents }: { documents: LibraryDocumen
     setUploading(true);
     setUploadError(null);
     try {
+      const uploadFile = await compressImageForUpload(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", uploadFile);
       const res = await fetch("/api/portal/documents/extract", { method: "POST", body: formData });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
