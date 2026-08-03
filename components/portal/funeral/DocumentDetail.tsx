@@ -3,8 +3,9 @@
 import { startTransition, useActionState, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import DocumentIcon from "@/components/dashboard/DocumentIcon";
-import { updateDocumentFields, type UpdateDocumentState } from "@/lib/portal/funeral/actions";
-import { DOCUMENT_TYPES, type LibraryDocument, type DocumentType } from "@/lib/portal/funeral/types";
+import { updateDocumentFields, saveGlanceFieldOrder, type UpdateDocumentState } from "@/lib/portal/funeral/actions";
+import { DOCUMENT_TYPES, type LibraryDocument, type DocumentType, type ExtractedFields } from "@/lib/portal/funeral/types";
+import { FIELD_BY_KEY, type FieldDef, resolveFieldSections } from "@/lib/portal/funeral/field-schema";
 
 const CATEGORY_STYLES: Record<DocumentType, string> = {
   "Death Certificate": "bg-slate-100 text-slate-700",
@@ -26,33 +27,63 @@ const inputClass =
   "mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500";
 const labelClass = "block text-sm font-medium text-slate-700";
 
-function InfoRow({ label, value, copyable }: { label: string; value: string; copyable?: boolean }) {
-  const [copied, setCopied] = useState(false);
+function FieldInput({ def, extracted }: { def: FieldDef; extracted: ExtractedFields }) {
+  const value = extracted[def.key];
 
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // Clipboard can be unavailable — no-op.
-    }
+  if (def.input === "textarea") {
+    return (
+      <div className="sm:col-span-2">
+        <label className={labelClass} htmlFor={def.key}>
+          {def.label}
+        </label>
+        <textarea id={def.key} name={def.key} defaultValue={(value as string) ?? ""} rows={3} className={inputClass} />
+      </div>
+    );
+  }
+
+  if (def.input === "boolean") {
+    const v = value as boolean | null;
+    return (
+      <div>
+        <label className={labelClass} htmlFor={def.key}>
+          {def.label}
+        </label>
+        <select id={def.key} name={def.key} defaultValue={v === true ? "yes" : v === false ? "no" : ""} className={inputClass}>
+          <option value="">Unknown</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+    );
+  }
+
+  if (def.input === "disposition") {
+    return (
+      <div>
+        <label className={labelClass} htmlFor={def.key}>
+          {def.label}
+        </label>
+        <select id={def.key} name={def.key} defaultValue={(value as string) ?? ""} className={inputClass}>
+          <option value="">Unspecified</option>
+          <option value="Burial">Burial</option>
+          <option value="Cremation">Cremation</option>
+        </select>
+      </div>
+    );
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-slate-100 py-3 last:border-b-0">
-      <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-        <p className="mt-0.5 truncate text-sm font-medium text-slate-900">{value}</p>
-      </div>
-      {copyable && (
-        <button
-          onClick={handleCopy}
-          className="flex-shrink-0 whitespace-nowrap rounded-md border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
-        >
-          {copied ? "Copied!" : "Copy"}
-        </button>
-      )}
+    <div>
+      <label className={labelClass} htmlFor={def.key}>
+        {def.label}
+      </label>
+      <input
+        id={def.key}
+        name={def.key}
+        type={def.input === "date" ? "date" : def.input === "number" ? "number" : "text"}
+        defaultValue={(value as string | number | null) ?? ""}
+        className={inputClass}
+      />
     </div>
   );
 }
@@ -62,9 +93,11 @@ const initialState: UpdateDocumentState = { error: null, savedAt: null };
 export default function DocumentDetail({
   doc,
   previewUrl,
+  fieldPrefs,
 }: {
   doc: LibraryDocument;
   previewUrl: string | null;
+  fieldPrefs: string[] | null;
 }) {
   const { extracted } = doc;
   const router = useRouter();
@@ -81,7 +114,19 @@ export default function DocumentDetail({
   const retakeCameraInputRef = useRef<HTMLInputElement>(null);
   const retakeFileInputRef = useRef<HTMLInputElement>(null);
 
+  // "At a Glance" field order — glanceOrder is the saved/applied order;
+  // draftOrder is only touched while the customize panel is open, so
+  // in-progress reordering never affects the main correction form until
+  // it's explicitly saved.
+  const [glanceOrder, setGlanceOrder] = useState<string[]>(fieldPrefs ?? []);
+  const [editingLayout, setEditingLayout] = useState(false);
+  const [draftOrder, setDraftOrder] = useState<string[]>(glanceOrder);
+  const [layoutSaving, setLayoutSaving] = useState(false);
+  const [layoutError, setLayoutError] = useState<string | null>(null);
+
   const categoryStyle = category ? CATEGORY_STYLES[category] : "bg-slate-100 text-slate-500";
+  const sections = resolveFieldSections(glanceOrder);
+  const draftSections = resolveFieldSections(draftOrder);
 
   function handleCategoryChange(next: string) {
     const nextCategory = next as DocumentType | "";
@@ -92,6 +137,45 @@ export default function DocumentDetail({
     const data = new FormData(formRef.current ?? undefined);
     data.set("document_type", nextCategory);
     startTransition(() => formAction(data));
+  }
+
+  function openLayoutEditor() {
+    setDraftOrder(glanceOrder.length > 0 ? glanceOrder : sections.glance);
+    setLayoutError(null);
+    setEditingLayout(true);
+  }
+
+  function moveDraftField(index: number, direction: -1 | 1) {
+    setDraftOrder((prev) => {
+      const next = [...prev];
+      const target = index + direction;
+      if (target < 0 || target >= next.length) return prev;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  }
+
+  function removeDraftField(key: string) {
+    setDraftOrder((prev) => prev.filter((k) => k !== key));
+  }
+
+  function addDraftField(key: string) {
+    setDraftOrder((prev) => (prev.includes(key) ? prev : [...prev, key]));
+  }
+
+  async function handleSaveLayout() {
+    setLayoutSaving(true);
+    setLayoutError(null);
+    try {
+      const { error } = await saveGlanceFieldOrder(draftOrder);
+      if (error) throw new Error(error);
+      setGlanceOrder(draftOrder);
+      setEditingLayout(false);
+    } catch (err) {
+      setLayoutError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setLayoutSaving(false);
+    }
   }
 
   async function handleDelete() {
@@ -154,75 +238,147 @@ export default function DocumentDetail({
           </select>
         </div>
 
-        <form ref={formRef} action={formAction} className="mt-4 space-y-4">
+        <form ref={formRef} action={formAction} className="mt-4 space-y-6">
           <input type="hidden" name="id" value={doc.id} />
           <input type="hidden" name="document_type" value={category} />
 
-          <div>
-            <label className={labelClass} htmlFor="deceased_name">
-              Deceased
-            </label>
-            <input
-              id="deceased_name"
-              name="deceased_name"
-              defaultValue={extracted.deceased_name ?? ""}
-              className={inputClass}
-            />
+          <div className="rounded-lg border border-violet-200 bg-violet-50/50 p-4">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-xs font-bold uppercase tracking-wide text-violet-700">At a Glance</h3>
+              <button
+                type="button"
+                onClick={() => (editingLayout ? setEditingLayout(false) : openLayoutEditor())}
+                className="text-xs font-semibold text-violet-600 hover:text-violet-800"
+              >
+                {editingLayout ? "Close" : "Customize"}
+              </button>
+            </div>
+
+            {editingLayout && (
+              <div className="mt-3 rounded-lg border border-violet-200 bg-white p-3">
+                <p className="text-xs font-semibold text-slate-600">Pinned to At a Glance</p>
+                <ul className="mt-2 space-y-1">
+                  {draftOrder.length === 0 && (
+                    <li className="text-xs text-slate-400">Nothing pinned — add a field below.</li>
+                  )}
+                  {draftOrder.map((key, i) => (
+                    <li
+                      key={key}
+                      className="flex items-center justify-between gap-2 rounded-md border border-slate-100 px-2 py-1.5 text-sm"
+                    >
+                      <span className="text-slate-800">{FIELD_BY_KEY[key]?.label ?? key}</span>
+                      <span className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => moveDraftField(i, -1)}
+                          disabled={i === 0}
+                          className="rounded border border-slate-200 px-1.5 py-0.5 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-30"
+                        >
+                          ↑
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveDraftField(i, 1)}
+                          disabled={i === draftOrder.length - 1}
+                          className="rounded border border-slate-200 px-1.5 py-0.5 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-30"
+                        >
+                          ↓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeDraftField(key)}
+                          className="rounded border border-red-200 px-1.5 py-0.5 text-xs text-red-600 hover:bg-red-50"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <label className="mt-3 block text-xs font-semibold text-slate-600" htmlFor="add-glance-field">
+                  Add a field
+                </label>
+                <select
+                  id="add-glance-field"
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) addDraftField(e.target.value);
+                  }}
+                  className={inputClass}
+                >
+                  <option value="">Choose a field…</option>
+                  {draftSections.case.length > 0 && (
+                    <optgroup label="Case Details">
+                      {draftSections.case.map((key) => (
+                        <option key={key} value={key}>
+                          {FIELD_BY_KEY[key]?.label ?? key}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {draftSections.full.length > 0 && (
+                    <optgroup label="Full Record">
+                      {draftSections.full.map((key) => (
+                        <option key={key} value={key}>
+                          {FIELD_BY_KEY[key]?.label ?? key}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                </select>
+
+                <div className="mt-3 flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleSaveLayout}
+                    disabled={layoutSaving}
+                    className="rounded-md bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-700 disabled:opacity-60"
+                  >
+                    {layoutSaving ? "Saving…" : "Save layout"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingLayout(false)}
+                    disabled={layoutSaving}
+                    className="text-xs font-semibold text-slate-500 hover:text-slate-700"
+                  >
+                    Cancel
+                  </button>
+                  {layoutError && <span className="text-xs font-medium text-red-600">{layoutError}</span>}
+                </div>
+                <p className="mt-2 text-[11px] text-slate-400">
+                  Applies for everyone at your company, on every document.
+                </p>
+              </div>
+            )}
+
+            <div className="mt-3 grid gap-4 sm:grid-cols-2">
+              {sections.glance.map((key) => (
+                <FieldInput key={key} def={FIELD_BY_KEY[key]} extracted={extracted} />
+              ))}
+            </div>
           </div>
 
           <div>
-            <label className={labelClass} htmlFor="family_name">
-              Family / Next of Kin
-            </label>
-            <input
-              id="family_name"
-              name="family_name"
-              defaultValue={extracted.family_name ?? ""}
-              className={inputClass}
-            />
+            <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500">Case Details</h3>
+            <div className="mt-2 grid gap-4 sm:grid-cols-2">
+              {sections.case.map((key) => (
+                <FieldInput key={key} def={FIELD_BY_KEY[key]} extracted={extracted} />
+              ))}
+            </div>
           </div>
 
-          <div>
-            <label className={labelClass} htmlFor="phone_numbers">
-              Phone number(s)
-            </label>
-            <input
-              id="phone_numbers"
-              name="phone_numbers"
-              defaultValue={(extracted.phone_numbers ?? []).join(", ")}
-              placeholder="Separate multiple numbers with commas"
-              className={inputClass}
-            />
-          </div>
-
-          <div>
-            <label className={labelClass} htmlFor="date_of_death">
-              Date of Death
-            </label>
-            <input
-              id="date_of_death"
-              name="date_of_death"
-              type="date"
-              defaultValue={extracted.date_of_death ?? ""}
-              className={inputClass}
-            />
-          </div>
-
-          <div>
-            <label className={labelClass} htmlFor="service_date">
-              Service Date
-            </label>
-            <input
-              id="service_date"
-              name="service_date"
-              type="date"
-              defaultValue={extracted.service_date ?? ""}
-              className={inputClass}
-            />
-          </div>
-
-          <InfoRow label="Address" value={extracted.address ?? "Not found"} />
-          <InfoRow label="Notes" value={extracted.notes ?? "—"} />
+          <details className="rounded-lg border border-slate-100 p-3">
+            <summary className="cursor-pointer text-xs font-bold uppercase tracking-wide text-slate-500">
+              Full Record — show more
+            </summary>
+            <div className="mt-3 grid gap-4 sm:grid-cols-2">
+              {sections.full.map((key) => (
+                <FieldInput key={key} def={FIELD_BY_KEY[key]} extracted={extracted} />
+              ))}
+            </div>
+          </details>
 
           <div className="flex items-center gap-3 pt-1">
             <button

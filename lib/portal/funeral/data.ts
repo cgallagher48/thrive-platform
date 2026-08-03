@@ -8,16 +8,7 @@
 // the RLS WITH CHECK clause requires it to match the caller's company.
 
 import { createClient } from "@/lib/supabase/server";
-import type {
-  Family,
-  Service,
-  LibraryDocument,
-  Invoice,
-  InboxMessage,
-  Review,
-  ExtractedFields,
-  DocumentType,
-} from "./types";
+import type { Family, Service, LibraryDocument, Invoice, InboxMessage, Review, ExtractedFields } from "./types";
 
 function mapFamilyRow(row: Record<string, unknown>): Family {
   return {
@@ -46,12 +37,37 @@ function mapServiceRow(row: Record<string, unknown>): Service {
 function mapDocumentRow(row: Record<string, unknown>): LibraryDocument {
   const extracted: ExtractedFields = {
     deceased_name: (row.deceased_name as string | null) ?? null,
-    family_name: (row.family_name as string | null) ?? null,
-    phone_numbers: (row.phone_numbers as string[] | null) ?? null,
     date_of_death: (row.date_of_death as string | null) ?? null,
+    time_of_death: (row.time_of_death as string | null) ?? null,
+    next_of_kin_name: (row.next_of_kin_name as string | null) ?? null,
+    next_of_kin_relationship: (row.next_of_kin_relationship as string | null) ?? null,
+    next_of_kin_phone: (row.next_of_kin_phone as string | null) ?? null,
+    next_of_kin_cell: (row.next_of_kin_cell as string | null) ?? null,
+    date_of_birth: (row.date_of_birth as string | null) ?? null,
+    age: (row.age as string | null) ?? null,
+    sex: (row.sex as string | null) ?? null,
+    place_of_death: (row.place_of_death as string | null) ?? null,
+    cause_of_death: (row.cause_of_death as string | null) ?? null,
+    home_address: (row.home_address as string | null) ?? null,
+    disposition_type: (row.disposition_type as ExtractedFields["disposition_type"]) ?? null,
+    disposition_location: (row.disposition_location as string | null) ?? null,
+    funeral_director: (row.funeral_director as string | null) ?? null,
+    ssn: (row.ssn as string | null) ?? null,
+    marital_status: (row.marital_status as string | null) ?? null,
+    race: (row.race as string | null) ?? null,
+    hispanic_origin: (row.hispanic_origin as string | null) ?? null,
+    birthplace: (row.birthplace as string | null) ?? null,
+    occupation: (row.occupation as string | null) ?? null,
+    business_industry: (row.business_industry as string | null) ?? null,
+    father_name: (row.father_name as string | null) ?? null,
+    mother_maiden_name: (row.mother_maiden_name as string | null) ?? null,
+    physician_name: (row.physician_name as string | null) ?? null,
+    physician_phone: (row.physician_phone as string | null) ?? null,
+    armed_forces: (row.armed_forces as boolean | null) ?? null,
+    num_death_certificates: (row.num_death_certificates as number | null) ?? null,
+    education: (row.education as string | null) ?? null,
     service_date: (row.service_date as string | null) ?? null,
     document_type: (row.document_type as ExtractedFields["document_type"]) ?? null,
-    address: (row.address as string | null) ?? null,
     notes: (row.notes as string | null) ?? null,
   };
   return {
@@ -226,14 +242,7 @@ export async function createDocument(input: NewDocumentInput): Promise<LibraryDo
       storage_path: input.storagePath,
       extraction_status: input.extractionStatus,
       extraction_raw: input.extractionRaw ?? null,
-      deceased_name: input.extracted.deceased_name,
-      family_name: input.extracted.family_name,
-      phone_numbers: input.extracted.phone_numbers,
-      date_of_death: input.extracted.date_of_death,
-      service_date: input.extracted.service_date,
-      document_type: input.extracted.document_type,
-      address: input.extracted.address,
-      notes: input.extracted.notes,
+      ...input.extracted,
     })
     .select("*")
     .single();
@@ -242,37 +251,14 @@ export async function createDocument(input: NewDocumentInput): Promise<LibraryDo
   return mapDocumentRow(data);
 }
 
-export type DocumentCorrectionInput = {
-  documentType: DocumentType | null;
-  deceasedName: string | null;
-  familyName: string | null;
-  phoneNumbers: string[] | null;
-  dateOfDeath: string | null;
-  serviceDate: string | null;
-};
-
 // Manual corrections to a document's category and extracted fields — the
 // same columns createDocument sets from the AI extraction, but overwritten
-// by a human. RLS's own WITH CHECK (company_id = current_company_id())
-// still applies to this update, even though we don't touch company_id here.
-export async function updateDocument(
-  id: string,
-  input: DocumentCorrectionInput
-): Promise<LibraryDocument> {
+// by a human. Every extractable field is correctable this way, not just a
+// subset. RLS's own WITH CHECK (company_id = current_company_id()) still
+// applies to this update, even though we don't touch company_id here.
+export async function updateDocument(id: string, input: ExtractedFields): Promise<LibraryDocument> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("documents")
-    .update({
-      document_type: input.documentType,
-      deceased_name: input.deceasedName,
-      family_name: input.familyName,
-      phone_numbers: input.phoneNumbers,
-      date_of_death: input.dateOfDeath,
-      service_date: input.serviceDate,
-    })
-    .eq("id", id)
-    .select("*")
-    .single();
+  const { data, error } = await supabase.from("documents").update({ ...input }).eq("id", id).select("*").single();
 
   if (error || !data) throw new Error(`updateDocument: ${error?.message ?? "update failed"}`);
   return mapDocumentRow(data);
@@ -321,13 +307,7 @@ export async function replaceDocument(
       storage_path: input.storagePath,
       extraction_status: input.extractionStatus,
       extraction_raw: input.extractionRaw ?? null,
-      deceased_name: input.extracted.deceased_name,
-      family_name: input.extracted.family_name,
-      phone_numbers: input.extracted.phone_numbers,
-      service_date: input.extracted.service_date,
-      document_type: input.extracted.document_type,
-      address: input.extracted.address,
-      notes: input.extracted.notes,
+      ...input.extracted,
     })
     .eq("id", id)
     .select("*")
@@ -335,4 +315,28 @@ export async function replaceDocument(
 
   if (error || !data) throw new Error(`replaceDocument: ${error?.message ?? "update failed"}`);
   return mapDocumentRow(data);
+}
+
+// --- Per-company field-layout preferences -------------------------------
+
+// Returns the raw pinned "At a Glance" field order, or null if the company
+// hasn't customized it yet — callers fall back to the built-in default
+// order (see lib/portal/funeral/field-schema.ts) in that case.
+export async function getFieldPrefs(): Promise<string[] | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("company_field_prefs")
+    .select("at_a_glance_fields")
+    .maybeSingle();
+  if (error) throw new Error(`getFieldPrefs: ${error.message}`);
+  const fields = data?.at_a_glance_fields as string[] | null | undefined;
+  return fields && fields.length > 0 ? fields : null;
+}
+
+export async function updateFieldPrefs(companyId: string, atAGlanceFields: string[]): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("company_field_prefs")
+    .upsert({ company_id: companyId, at_a_glance_fields: atAGlanceFields, updated_at: new Date().toISOString() });
+  if (error) throw new Error(`updateFieldPrefs: ${error.message}`);
 }

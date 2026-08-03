@@ -36,7 +36,13 @@ export default function LibraryClient({ documents }: { documents: LibraryDocumen
     return documents.filter((doc) => {
       if (category !== "All" && doc.extracted.document_type !== category) return false;
       if (!normalized) return true;
-      const haystack = [doc.fileName, doc.extracted.deceased_name, doc.extracted.family_name, doc.extracted.document_type, doc.extracted.address]
+      const haystack = [
+        doc.fileName,
+        doc.extracted.deceased_name,
+        doc.extracted.next_of_kin_name,
+        doc.extracted.document_type,
+        doc.extracted.home_address,
+      ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -203,9 +209,11 @@ export default function LibraryClient({ documents }: { documents: LibraryDocumen
 
               <div className="mt-3 space-y-0.5 text-sm text-slate-600">
                 <p className="truncate font-medium text-slate-800">
-                  {doc.extracted.deceased_name ?? doc.extracted.family_name ?? "Unmatched"}
+                  {doc.extracted.deceased_name ?? doc.extracted.next_of_kin_name ?? "Unmatched"}
                 </p>
-                {doc.extracted.phone_numbers?.[0] && <p>{doc.extracted.phone_numbers[0]}</p>}
+                {(doc.extracted.next_of_kin_phone || doc.extracted.next_of_kin_cell) && (
+                  <p>{doc.extracted.next_of_kin_phone ?? doc.extracted.next_of_kin_cell}</p>
+                )}
                 {doc.extracted.service_date && <p>{doc.extracted.service_date}</p>}
               </div>
             </Link>

@@ -50,12 +50,37 @@ export const DOCUMENT_TYPES: DocumentType[] = [
 
 export type ExtractedFields = {
   deceased_name: string | null;
-  family_name: string | null;
-  phone_numbers: string[] | null;
   date_of_death: string | null;
+  time_of_death: string | null;
+  next_of_kin_name: string | null;
+  next_of_kin_relationship: string | null;
+  next_of_kin_phone: string | null;
+  next_of_kin_cell: string | null;
+  date_of_birth: string | null;
+  age: string | null;
+  sex: string | null;
+  place_of_death: string | null;
+  cause_of_death: string | null;
+  home_address: string | null;
+  disposition_type: "Burial" | "Cremation" | null;
+  disposition_location: string | null;
+  funeral_director: string | null;
+  ssn: string | null;
+  marital_status: string | null;
+  race: string | null;
+  hispanic_origin: string | null;
+  birthplace: string | null;
+  occupation: string | null;
+  business_industry: string | null;
+  father_name: string | null;
+  mother_maiden_name: string | null;
+  physician_name: string | null;
+  physician_phone: string | null;
+  armed_forces: boolean | null;
+  num_death_certificates: number | null;
+  education: string | null;
   service_date: string | null;
   document_type: DocumentType | null;
-  address: string | null;
   notes: string | null;
 };
 

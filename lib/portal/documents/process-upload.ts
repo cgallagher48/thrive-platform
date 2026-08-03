@@ -63,7 +63,7 @@ export async function processUploadedFile(file: File): Promise<ProcessedUpload> 
 // Best-effort match against existing families by name — used to link a
 // newly (re-)extracted document to a family record when one exists.
 export async function matchFamilyId(fields: ExtractedFields): Promise<string | null> {
-  const needle = (fields.deceased_name ?? fields.family_name ?? "").toLowerCase();
+  const needle = (fields.deceased_name ?? fields.next_of_kin_name ?? "").toLowerCase();
   if (!needle) return null;
   const families = await getFamilies();
   const match = families.find(

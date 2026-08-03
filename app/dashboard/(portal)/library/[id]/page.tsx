@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import DocumentDetail from "@/components/portal/funeral/DocumentDetail";
 import { requireSection } from "@/lib/portal/guard";
-import { getDocument, getDocumentSignedUrl } from "@/lib/portal/funeral/data";
+import { getDocument, getDocumentSignedUrl, getFieldPrefs } from "@/lib/portal/funeral/data";
 
 export default async function LibraryDocumentPage({
   params,
@@ -15,7 +15,10 @@ export default async function LibraryDocumentPage({
   const doc = await getDocument(id);
   if (!doc) notFound();
 
-  const previewUrl = doc.storagePath ? await getDocumentSignedUrl(doc.storagePath) : null;
+  const [previewUrl, fieldPrefs] = await Promise.all([
+    doc.storagePath ? getDocumentSignedUrl(doc.storagePath) : Promise.resolve(null),
+    getFieldPrefs(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -28,7 +31,7 @@ export default async function LibraryDocumentPage({
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">{doc.fileName}</h1>
         <p className="mt-1 text-sm text-slate-600">
-          {doc.extracted.deceased_name ?? doc.extracted.family_name ?? "Unmatched document"}
+          {doc.extracted.deceased_name ?? doc.extracted.next_of_kin_name ?? "Unmatched document"}
         </p>
       </div>
 
@@ -36,7 +39,7 @@ export default async function LibraryDocumentPage({
           fresh storage path) forces a clean remount — local state like the
           category selector and the correction form's default values would
           otherwise keep showing the replaced document's old content. */}
-      <DocumentDetail key={doc.storagePath ?? doc.id} doc={doc} previewUrl={previewUrl} />
+      <DocumentDetail key={doc.storagePath ?? doc.id} doc={doc} previewUrl={previewUrl} fieldPrefs={fieldPrefs} />
     </div>
   );
 }
