@@ -52,16 +52,30 @@ export async function POST(req: NextRequest) {
 
   const familyId = await matchFamilyId(processed.extraction.fields);
 
-  const document = await createDocument({
-    companyId: user.company.id,
-    familyId,
-    fileName: processed.pdfFileName,
-    fileType: "pdf",
-    storagePath,
-    extractionStatus: processed.extraction.status,
-    extracted: processed.extraction.fields,
-    extractionRaw: processed.extraction.raw,
-  });
+  let document;
+  try {
+    document = await createDocument({
+      companyId: user.company.id,
+      familyId,
+      fileName: processed.pdfFileName,
+      fileType: "pdf",
+      storagePath,
+      extractionStatus: processed.extraction.status,
+      extracted: processed.extraction.fields,
+      extractionRaw: processed.extraction.raw,
+    });
+  } catch (error) {
+    // The file is already uploaded to storage but the row never got
+    // created — clean up the orphaned upload rather than leaving it
+    // stranded, and surface a real JSON error instead of letting this
+    // throw all the way up into a raw, non-JSON 500 (which the client
+    // can only report back as a generic "Upload failed.").
+    await supabase.storage.from("documents").remove([storagePath]);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Couldn't save the document." },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({ document });
 }

@@ -9,6 +9,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { Family, Service, LibraryDocument, Invoice, InboxMessage, Review, ExtractedFields } from "./types";
+import { sanitizeForWrite } from "./sanitize";
 
 function mapFamilyRow(row: Record<string, unknown>): Family {
   return {
@@ -242,7 +243,7 @@ export async function createDocument(input: NewDocumentInput): Promise<LibraryDo
       storage_path: input.storagePath,
       extraction_status: input.extractionStatus,
       extraction_raw: input.extractionRaw ?? null,
-      ...input.extracted,
+      ...sanitizeForWrite(input.extracted),
     })
     .select("*")
     .single();
@@ -258,7 +259,12 @@ export async function createDocument(input: NewDocumentInput): Promise<LibraryDo
 // applies to this update, even though we don't touch company_id here.
 export async function updateDocument(id: string, input: ExtractedFields): Promise<LibraryDocument> {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("documents").update({ ...input }).eq("id", id).select("*").single();
+  const { data, error } = await supabase
+    .from("documents")
+    .update({ ...sanitizeForWrite(input) })
+    .eq("id", id)
+    .select("*")
+    .single();
 
   if (error || !data) throw new Error(`updateDocument: ${error?.message ?? "update failed"}`);
   return mapDocumentRow(data);
@@ -307,7 +313,7 @@ export async function replaceDocument(
       storage_path: input.storagePath,
       extraction_status: input.extractionStatus,
       extraction_raw: input.extractionRaw ?? null,
-      ...input.extracted,
+      ...sanitizeForWrite(input.extracted),
     })
     .eq("id", id)
     .select("*")
