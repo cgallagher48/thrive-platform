@@ -1,15 +1,33 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-const SB = "https://xlyzfcabvvuhrtnigydm.supabase.co";
-const KEY = "sb_publishable_aZIy_vimeZ8V1UJRcZFLEw_iA0pf38O";
 const ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
 
-async function db(table: string, method = "GET", body?: any, query = "") {
-  const res = await fetch(`${SB}/rest/v1/${table}${query}`, {
-    method,
-    headers: { apikey: KEY, Authorization: `Bearer ${KEY}`, "Content-Type": "application/json", Prefer: "return=representation" },
-    body: body ? JSON.stringify(body) : undefined,
+// Talks to /api/ops-data (server-side, service_role) instead of hitting
+// Supabase directly from the browser -- RLS now blocks the old publishable
+// key entirely. `query` is only inspected for PATCH to pull the row id out
+// of the old "?id=eq.<id>" shape callers already pass.
+async function db(table: string, method = "GET", body?: any, query = "", secret = "") {
+  if (method === "GET") {
+    const res = await fetch(`/api/ops-data?table=${encodeURIComponent(table)}`, {
+      headers: { "x-atlas-secret": secret },
+    });
+    return res.json();
+  }
+  if (method === "PATCH") {
+    const m = query.match(/id=eq\.([^&]+)/);
+    const id = m ? decodeURIComponent(m[1]) : undefined;
+    const res = await fetch("/api/ops-data", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "x-atlas-secret": secret },
+      body: JSON.stringify({ table, id, fields: body }),
+    });
+    return res.json();
+  }
+  const res = await fetch("/api/ops-data", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-atlas-secret": secret },
+    body: JSON.stringify({ table, record: body }),
   });
   return res.json();
 }
@@ -96,10 +114,10 @@ const [pin, setPin] = useState("");
 
   async function loadAll() {
     const [l, cl, fi, ca] = await Promise.all([
-      db("leads", "GET", undefined, "?select=*&order=created_at.desc"),
-      db("clients", "GET", undefined, "?select=*&order=created_at.desc"),
-      db("finances", "GET", undefined, "?select=*&order=created_at.desc"),
-      db("campaigns", "GET", undefined, "?select=*&order=created_at.desc"),
+      db("leads", "GET", undefined, "", pin),
+      db("clients", "GET", undefined, "", pin),
+      db("finances", "GET", undefined, "", pin),
+      db("campaigns", "GET", undefined, "", pin),
     ]);
     const la = Array.isArray(l) ? l : [];
     const ca2 = Array.isArray(cl) ? cl : [];
@@ -202,30 +220,30 @@ if (!unlocked) return (
   }
 
   async function moveStatus(id: number, status: string) {
-    await db("leads", "PATCH", { status }, `?id=eq.${id}`);
+    await db("leads", "PATCH", { status }, `?id=eq.${id}`, pin);
     setLeads(leads.map(l => l.id === id ? { ...l, status } : l));
   }
 
   async function saveLeadNote(id: number) {
-    await db("leads", "PATCH", { notes: notes[id] }, `?id=eq.${id}`);
+    await db("leads", "PATCH", { notes: notes[id] }, `?id=eq.${id}`, pin);
   }
 
   async function addClient() {
-    const res = await db("clients", "POST", { ...newClient, monthly_value: parseFloat(newClient.monthly_value) || 0 });
+    const res = await db("clients", "POST", { ...newClient, monthly_value: parseFloat(newClient.monthly_value) || 0 }, "", pin);
     if (Array.isArray(res)) setClients([...res, ...clients]);
     setShowAddClient(false);
     setNewClient({ name: "", email: "", phone: "", business: "", industry: "", monthly_value: "", status: "Active" });
   }
 
   async function addFinance() {
-    const res = await db("finances", "POST", { ...newFinance, amount: parseFloat(newFinance.amount) || 0 });
+    const res = await db("finances", "POST", { ...newFinance, amount: parseFloat(newFinance.amount) || 0 }, "", pin);
     if (Array.isArray(res)) setFinances([...res, ...finances]);
     setShowAddFinance(false);
     setNewFinance({ type: "revenue", amount: "", description: "", date: new Date().toISOString().split("T")[0], category: "" });
   }
 
   async function addCampaign() {
-    const res = await db("campaigns", "POST", { ...newCampaign, messages_sent: parseInt(newCampaign.messages_sent) || 0, responses: parseInt(newCampaign.responses) || 0, leads_generated: parseInt(newCampaign.leads_generated) || 0 });
+    const res = await db("campaigns", "POST", { ...newCampaign, messages_sent: parseInt(newCampaign.messages_sent) || 0, responses: parseInt(newCampaign.responses) || 0, leads_generated: parseInt(newCampaign.leads_generated) || 0 }, "", pin);
     if (Array.isArray(res)) setCampaigns([...res, ...campaigns]);
     setShowAddCampaign(false);
   }
