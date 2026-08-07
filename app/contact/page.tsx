@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 };
 
 const CALL_POINTS = [
-  "How your business runs today — leads, quotes, scheduling, invoicing",
+  "How your business runs today: leads, quotes, scheduling, invoicing",
   "Where things currently fall through the cracks",
   "Which engines fit, and what the system would look like for you",
-  "Pricing — we go through it openly on the call",
+  "Pricing. We go through it openly on the call",
 ];
 
 export default function ContactPage() {
@@ -29,8 +29,8 @@ export default function ContactPage() {
                   Book a call.
                 </h1>
                 <p className="mt-5 max-w-lg text-lg leading-relaxed text-slate-600">
-                  Every engagement starts with a conversation — no forms, no
-                  sales sequence. Pick a time that works and we&apos;ll talk
+                  Every engagement starts with a conversation. No forms, no
+                  sales sequence, just picking a time that works and talking
                   through your operation.
                 </p>
                 <h2 className="mt-10 text-sm font-semibold uppercase tracking-wider text-violet-600">

@@ -1,20 +1,22 @@
+import Image from "next/image";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import FramedPhoto from "@/components/FramedPhoto";
 import { BASE, CALENDLY_URL, ENGINES } from "@/lib/systems";
 
 const STEPS = [
   {
     title: "Book a call",
-    body: "We walk through how your business runs today — where leads come from, how work gets scheduled, where things fall through the cracks.",
+    body: "We walk through how your business runs today: where leads come from, how work gets scheduled, and where things are falling through the cracks.",
   },
   {
     title: "We build your system",
-    body: "Every build starts with the Dashboard and the Brain. Then we configure the engines your business actually needs — nothing you don't.",
+    body: "Every build starts with the Dashboard and the Brain. From there, we add only the engines your business actually needs.",
   },
   {
     title: "Your operations run themselves",
-    body: "Leads get answered, quotes get followed up, invoices get chased — automatically. You watch it all from one dashboard.",
+    body: "Leads get answered. Quotes get followed up. Invoices get chased down. You watch all of it from one dashboard.",
   },
 ];
 
@@ -26,24 +28,34 @@ export default function Home() {
         {/* Hero */}
         <section className="border-b border-slate-100 bg-white">
           <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
-            <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              Automation That Runs Your Business.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
-              We build intelligent operations systems — one dashboard, an AI
-              brain, and automation engines configured to your business. Leads
-              answered, quotes followed up, invoices collected, reviews
-              requested. Automatically.
-            </p>
-            <div className="mt-8">
-              <a
-                href={CALENDLY_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block rounded-md bg-gradient-to-r from-violet-600 to-purple-500 px-7 py-3.5 text-base font-semibold text-white hover:from-violet-700 hover:to-purple-600"
-              >
-                Book a Call
-              </a>
+            <div className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:items-center">
+              <div>
+                <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+                  Automation That Runs Your Business.
+                </h1>
+                <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
+                  One dashboard, one AI brain, and automation engines built
+                  around your business. Leads get answered the moment they
+                  come in. Quotes get followed up until they close. Invoices
+                  go out on their own and get chased down until they&apos;re
+                  paid.
+                </p>
+                <div className="mt-8">
+                  <a
+                    href={CALENDLY_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block rounded-md bg-gradient-to-r from-violet-600 to-purple-500 px-7 py-3.5 text-base font-semibold text-white hover:from-violet-700 hover:to-purple-600"
+                  >
+                    Book a Call
+                  </a>
+                </div>
+              </div>
+              <FramedPhoto
+                src="/images/hero-happy-owner.jpg"
+                alt="A smiling shop owner standing confidently in his store"
+                priority
+              />
             </div>
           </div>
         </section>
@@ -151,10 +163,88 @@ export default function Home() {
               Any business with leads, quotes, schedules, and customers.
             </h2>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">
-              Currently focused on service businesses — roofing, masonry, HVAC,
-              contractors. The engines are industry-agnostic: we configure them
-              to how your business actually works.
+              We work with local businesses of all kinds: roofing crews and
+              HVAC companies, salons and barbershops, cafes and auto shops,
+              anyone juggling leads, quotes, scheduling, and follow-up. The
+              engines aren&apos;t industry-specific. We configure each one to
+              match how your business actually runs.
             </p>
+          </div>
+        </section>
+
+        {/* Community banner */}
+        <section className="relative isolate">
+          <div className="relative h-64 w-full overflow-hidden sm:h-80">
+            <Image
+              src="/images/community-team-celebrating.jpg"
+              alt="A diverse business team celebrating together in an office"
+              fill
+              sizes="100vw"
+              className="object-cover object-[50%_40%]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/75 via-slate-900/20 to-transparent" />
+            <div className="absolute inset-0 flex items-end">
+              <p className="mx-auto max-w-6xl px-5 pb-8 text-lg font-semibold text-white sm:px-8 sm:text-xl">
+                Built for the businesses that keep your city running.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Our Story */}
+        <section id="our-story" className="scroll-mt-16 bg-slate-50">
+          <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
+            <p className="text-xs font-semibold uppercase tracking-wider text-violet-600">
+              Our Story
+            </p>
+            <h2 className="mt-3 max-w-2xl text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Why I built Thrive.
+            </h2>
+            <div className="mt-10 grid gap-10 lg:grid-cols-[2fr_3fr] lg:items-start">
+              <FramedPhoto
+                src="/images/story-power-washing.png"
+                alt="A power washer cleaning a stone patio outside a home"
+                aspect="4 / 5"
+                objectPosition="70% 45%"
+                sizes="(min-width: 1024px) 35vw, 100vw"
+              />
+              <div className="space-y-5 text-lg leading-relaxed text-slate-600">
+                <p>I built the first version of Thrive for myself.</p>
+                <p>
+                  I was running a power washing business, out on jobs most of
+                  the day with my hands busy and my phone going off in my
+                  pocket. Half the time I could not get to it, and a lead that
+                  called while I was working had usually moved on by the time
+                  I called back. At night I would sit down to catch up on the
+                  follow ups, the scheduling, the invoices I still had not
+                  sent. I have always loved building systems, so instead of
+                  just grinding through it, I started building tools to
+                  handle all of it for me.
+                </p>
+                <p>
+                  Once it was running, it hit me. Every owner I knew was stuck
+                  in the same loop I had just climbed out of, doing by hand
+                  what software could already do on its own. That software
+                  exists. The problem is it is built for big companies with
+                  big budgets and an IT team to run it, not for the guy
+                  washing houses or the shop down the street.
+                </p>
+                <p>
+                  That never sat right with me. The small businesses in my own
+                  neighborhood, the ones I actually know, were the ones
+                  getting priced out of the tools that would help them most.
+                </p>
+                <p>
+                  So that is what Thrive is. I take the kind of automation the
+                  big companies pay a fortune for and build it for the
+                  businesses that keep this city running, at a price that
+                  makes sense for a real shop.
+                </p>
+                <p className="pt-2 font-semibold text-slate-900">
+                  Casey Gallagher, Founder
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 

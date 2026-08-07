@@ -10,14 +10,14 @@ export type System = {
   comingSoon?: boolean;
 };
 
-// Always included with every build — the base every engine plugs into.
+// Always included with every build: the base every engine plugs into.
 export const BASE: System[] = [
   {
     slug: "dashboard",
     name: "The Dashboard",
     tagline: "One place to see the whole business.",
     description:
-      "Leads, jobs, money, and schedule — everything that matters, on one screen. No more piecing the picture together from a CRM, a spreadsheet, an inbox, and a whiteboard.",
+      "Leads, jobs, money, and your schedule, all on one screen. No more piecing the picture together from a CRM, a spreadsheet, an inbox, and a whiteboard.",
     benefit:
       "You open one page and know exactly where the business stands, right now.",
   },
@@ -26,7 +26,7 @@ export const BASE: System[] = [
     name: "The Brain",
     tagline: "An AI assistant that knows your business.",
     description:
-      "Ask it anything — “How many open quotes do we have?” “Who hasn’t paid?” “What needs me today?” — and get a real answer from your own data. Every morning it sends you a daily brief of what happened and what needs attention.",
+      "Ask it anything: “How many open quotes do we have?” “Who hasn’t paid?” “What needs me today?” It answers from your own data, not a canned script. Every morning it also sends a daily brief of what happened and what needs your attention.",
     benefit:
       "Answers that used to take digging through systems now take one question.",
   },
@@ -39,7 +39,7 @@ export const ENGINES: System[] = [
     name: "Speed-to-Lead",
     tagline: "Every inbound lead gets an instant response.",
     description:
-      "Captures every inbound lead the moment it arrives — website, phone, or form — qualifies it with AI, and responds immediately, at any hour.",
+      "Captures every inbound lead the moment it arrives, whether that's your website, a phone call, or a form. Qualifies it with AI and responds immediately, day or night.",
     benefit:
       "Leads stop going cold while they wait for a callback. The first business to respond usually wins the job.",
   },
@@ -48,7 +48,7 @@ export const ENGINES: System[] = [
     name: "Follow-Up Engine",
     tagline: "Nothing dies in an inbox.",
     description:
-      "Every quote and inquiry gets persistent, personalized follow-up until it gets an answer — yes, no, or not yet.",
+      "Every quote and inquiry gets persistent, personalized follow-up until it gets an answer: yes, no, or not yet.",
     benefit:
       "Work you already quoted stops slipping away because nobody circled back.",
   },
@@ -59,14 +59,14 @@ export const ENGINES: System[] = [
     description:
       "Leads book straight into your calendar. Reminders and rescheduling are handled automatically.",
     benefit:
-      "No more back-and-forth to find a time — and fewer no-shows on the schedule.",
+      "No more back-and-forth to find a time, and fewer no-shows on the schedule.",
   },
   {
     slug: "reputation",
     name: "Reputation Engine",
     tagline: "Every completed job asks for its own review.",
     description:
-      "Completed jobs automatically trigger review requests. If a negative review lands, you’re alerted immediately — with a drafted response ready to go.",
+      "Completed jobs automatically trigger review requests. If a negative review lands, you’re alerted immediately, and a drafted response is ready to go.",
     benefit:
       "Your review count grows from work you’re already doing, and bad reviews never sit unanswered.",
   },
@@ -84,7 +84,7 @@ export const ENGINES: System[] = [
     name: "Reactivation + Referral",
     tagline: "Turns past customers into the next ones.",
     description:
-      "Re-engages dormant customers and systematically asks happy ones for referrals — mining the customer list you already have.",
+      "Re-engages dormant customers and systematically asks happy ones for referrals, working the customer list you already have.",
     benefit:
       "New work from people who already know you, without buying more leads.",
   },
@@ -95,7 +95,7 @@ export const ENGINES: System[] = [
     description:
       "Daily crew briefs, job photos turned into customer-facing reports, and automatic status updates as work progresses.",
     benefit:
-      "Customers stop calling to ask “when are you coming?” — they already know.",
+      "Customers stop calling to ask “when are you coming?” They already know.",
   },
   {
     slug: "team-sync",
@@ -122,7 +122,7 @@ export const ENGINES: System[] = [
     description:
       "In development. It will answer every inbound call around the clock, qualify the caller, and book the appointment.",
     benefit:
-      "No missed call will go unanswered — even at 2 AM on a Sunday.",
+      "No missed call will go unanswered, even at 2 AM on a Sunday.",
     comingSoon: true,
   },
 ];

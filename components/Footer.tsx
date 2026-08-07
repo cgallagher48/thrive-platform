@@ -15,8 +15,8 @@ export default function Footer() {
             Thrive<span className="text-violet-600"> Automation</span>
           </div>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-600">
-            We build intelligent operations systems — one dashboard, an AI brain,
-            and automation engines configured to your business.
+            We build automation systems for small businesses: one dashboard,
+            an AI brain, and engines that handle the busywork automatically.
           </p>
           <a
             href={CALENDLY_URL}

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import FramedPhoto from "@/components/FramedPhoto";
 import { BASE, CALENDLY_URL, ENGINES } from "@/lib/systems";
 
 export const metadata: Metadata = {
   title: "Our Systems | Thrive Automation Agency",
   description:
-    "The Dashboard and the Brain come with every build. Then pick the engines your business needs — from Speed-to-Lead to Trigger Campaigns.",
+    "The Dashboard and the Brain come with every build. From there, pick the engines your business needs, from Speed-to-Lead to Trigger Campaigns.",
 };
 
 export default function SystemsPage() {
@@ -17,14 +18,25 @@ export default function SystemsPage() {
         {/* Intro + base */}
         <section className="border-b border-slate-100 bg-white">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-            <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-              Our Systems
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">
-              Every build starts with the same foundation — the Dashboard and
-              the Brain. On top of that, you pick the engines your business
-              needs. Each one runs a part of your operation automatically.
-            </p>
+            <div className="grid gap-10 lg:grid-cols-[3fr_2fr] lg:items-center">
+              <div>
+                <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+                  Our Systems
+                </h1>
+                <p className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">
+                  Every build starts with the same foundation: the Dashboard
+                  and the Brain. On top of that, you pick the engines your
+                  business needs. Each one automates a specific part of how
+                  you operate.
+                </p>
+              </div>
+              <FramedPhoto
+                src="/images/systems-rocket.png"
+                alt="An illustration of a rocket launching upward, representing business growth"
+                aspect="3 / 2"
+                priority
+              />
+            </div>
             <div className="mt-10 grid gap-6 md:grid-cols-2">
               {BASE.map((b) => (
                 <div

@@ -88,6 +88,12 @@ export default function Nav() {
           <Link href="/#how-it-works" className="text-sm font-medium text-slate-700 hover:text-slate-900">
             How It Works
           </Link>
+          <Link href="/#our-story" className="text-sm font-medium text-slate-700 hover:text-slate-900">
+            Our Story
+          </Link>
+          <Link href="/team" className="text-sm font-medium text-slate-700 hover:text-slate-900">
+            Meet the Team
+          </Link>
           <Link href="/contact" className="text-sm font-medium text-slate-700 hover:text-slate-900">
             Contact
           </Link>
@@ -163,6 +169,12 @@ export default function Nav() {
           )}
           <Link href="/#how-it-works" onClick={closeAll} className="block py-3 text-sm font-medium text-slate-800">
             How It Works
+          </Link>
+          <Link href="/#our-story" onClick={closeAll} className="block py-3 text-sm font-medium text-slate-800">
+            Our Story
+          </Link>
+          <Link href="/team" onClick={closeAll} className="block py-3 text-sm font-medium text-slate-800">
+            Meet the Team
           </Link>
           <Link href="/contact" onClick={closeAll} className="block py-3 text-sm font-medium text-slate-800">
             Contact

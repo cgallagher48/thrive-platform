@@ -15,10 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.thriveautomation.agency'),
   title: 'Thrive Automation Agency | Intelligent Operations Systems',
-  description: 'We build intelligent operations systems — one dashboard, an AI brain, and automation engines configured to your business.',
+  description: 'We build automation systems for small businesses. One dashboard, an AI brain, and engines that handle leads, quotes, invoicing, and reviews automatically.',
   openGraph: {
     title: 'Thrive Automation Agency | Intelligent Operations Systems',
-    description: 'We build intelligent operations systems — one dashboard, an AI brain, and automation engines configured to your business.',
+    description: 'We build automation systems for small businesses. One dashboard, an AI brain, and engines that handle leads, quotes, invoicing, and reviews automatically.',
     url: 'https://www.thriveautomation.agency',
     siteName: 'Thrive Automation Agency',
     type: 'website',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Thrive Automation Agency',
-    description: 'We build intelligent operations systems — one dashboard, an AI brain, and automation engines configured to your business.',
+    description: 'We build automation systems for small businesses. One dashboard, an AI brain, and engines that handle leads, quotes, invoicing, and reviews automatically.',
   },
   // Icons are intentionally NOT set here — an explicit `icons` field
   // overrides Next's file-convention auto-detection entirely (and since it
