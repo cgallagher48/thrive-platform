@@ -3,7 +3,10 @@ import { timingSafeEqual } from "crypto";
 
 // Shared-secret auth: /ops sends the access code Casey types at the unlock
 // screen as x-atlas-secret; we compare it to ATLAS_SHARED_SECRET (set in
-// Vercel env vars / .env.development.local). Fails closed if unset.
+// Vercel env vars for production, .env.local for local dev). Fails closed
+// if unset. Keep this defined in exactly one local env file, not both
+// .env.local and .env.development.local, the latter takes precedence
+// during `next dev` and will silently shadow .env.local if both are set.
 function authorized(req: NextRequest) {
   const secret = process.env.ATLAS_SHARED_SECRET;
   if (!secret) return false;

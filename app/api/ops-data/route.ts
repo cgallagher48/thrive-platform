@@ -34,7 +34,9 @@ function opsSupabase() {
   );
 }
 
-const TABLES = ["leads", "clients", "finances", "campaigns"] as const;
+// "finances" is intentionally not in this list. Finances live only in
+// atlas-os now -- this route must never fetch or return that table.
+const TABLES = ["leads", "clients", "campaigns"] as const;
 type Table = (typeof TABLES)[number];
 function validTable(t: unknown): t is Table {
   return typeof t === "string" && (TABLES as readonly string[]).includes(t);
